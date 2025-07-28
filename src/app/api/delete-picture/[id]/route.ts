@@ -1,4 +1,7 @@
-// src/app/api/delete-picture/route.ts
+// This file is part of the Next.js project and is used to handle the deletion of pictures from Firebase Storage and Firestore.
+// It exports a DELETE function that processes the request to delete a picture by its ID. 
+// source: src/app/api/delete-picture/[id]/route.ts
+// It checks if the ID is provided, retrieves the photo document from Firestore, deletes the
 import { NextRequest, NextResponse } from 'next/server';
 import { bucket } from '@/lib/firebase-admin';
 import { db } from '@/lib/firebase';
@@ -6,10 +9,11 @@ import { doc, deleteDoc, getDoc } from 'firebase/firestore';
 
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const photoId = params.id;
+    // Await the params since they're now a Promise
+    const { id: photoId } = await params;
 
     if (!photoId) {
       return NextResponse.json(
@@ -44,7 +48,6 @@ export async function DELETE(
     const file = bucket.file(filePath);
 
     await file.delete();
-
     await deleteDoc(photoRef);
 
     return NextResponse.json(
