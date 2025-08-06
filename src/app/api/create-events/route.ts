@@ -2,7 +2,6 @@
 import { db } from '@/lib/firebase';
 import { collection, addDoc } from 'firebase/firestore';
 import { NextResponse } from 'next/server';
-import { eventNames } from 'process';
 
 export async function POST(req: Request) {
   try {
@@ -18,6 +17,7 @@ export async function POST(req: Request) {
       local,
       typeEvent,
       createdAt: new Date(),
+      dataEvent: body.dataEvent ? new Date(body.dataEvent + 'T12:00:00') : null,
     });
     const eventId = docRef.id;
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';

@@ -20,6 +20,7 @@
     "formidable": "^3.5.4",
     "jose": "^6.0.12",
     "jsonwebtoken": "^9.0.2",
+    "jspdf": "^3.0.1",
     "multer": "^2.0.2",
     "next": "15.4.2",
     "next-auth": "^4.24.11",

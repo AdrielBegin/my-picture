@@ -1,7 +1,7 @@
 import { Timestamp } from 'firebase/firestore';
 
 export type Photo = {
-  eventId?: string;
+  eventId: string;
   id?: string;
   url: string;
   userName?: string;
