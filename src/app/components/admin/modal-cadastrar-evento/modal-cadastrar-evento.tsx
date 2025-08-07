@@ -298,7 +298,7 @@ export default function ModalCadastroEvento() {
         <div className={tw`fixed bottom-10 right-6 bg-white p-4 rounded-xl shadow-xl text-center z-50 max-w-xs`}>
           <h3 className={tw`text-lg font-semibold mb-2`}>QR Code do evento:</h3>
           <canvas ref={canvasRef} width={200} height={200} />
-          {/* <p className={tw`text-sm text-gray-500 mt-2 break-all`}>{qrUrl}</p> */}
+          <p className={tw`text-sm text-gray-500 mt-2 break-all`}>{qrUrl}</p>
 
           {/* Botão para baixar PDF - agora opcional já que o download é automático */}
           <button

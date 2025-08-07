@@ -13,6 +13,7 @@ export default function SendPicture() {
     const eventId = searchParams.get('eventId');
     const [userName, setUserName] = useState('');
     const eventName = searchParams.get('eventName') || 'Evento Desconhecido';
+    const [showCamera, setShowCamera] = useState(false);
 
     const handleUpload = async (file: File) => {
         try {
@@ -21,7 +22,7 @@ export default function SendPicture() {
             if (userName) {
                 formData.append('userName', userName);
             } else if (!userName) {
-                toast.warn('Por favor, insira seu nome antes de enviar a foto.');                
+                toast.warn('Por favor, insira seu nome antes de enviar a foto.');
                 return;
             }
 
@@ -72,7 +73,19 @@ export default function SendPicture() {
                 </div>
 
                 <div className={tw`space-y-6`}>
-                    <CameraCapture onCapture={handleUpload} />
+                    <button
+                        onClick={() => setShowCamera(true)}
+                        disabled={!userName}
+                        className={tw`w-full py-2 px-4 rounded mt-4 text-white ${userName ? 'bg-indigo-600 hover:bg-indigo-700' : 'bg-gray-400 cursor-not-allowed'}`}
+                    >
+                        Ligar câmera
+                    </button>
+                    {showCamera && (
+                        <CameraCapture
+                            onCapture={handleUpload}
+                            onClose={() => setShowCamera(false)}
+                        />
+                    )}
                     <FileUpload onUpload={handleUpload} />
                     <UploadStatus status={uploadStatus} />
                 </div>
