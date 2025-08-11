@@ -23,6 +23,11 @@ export default function SendPicture() {
                 formData.append('userName', userName);
             } else if (!userName) {
                 toast.warn('Por favor, insira seu nome antes de enviar a foto.');
+
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1500);
+
                 return;
             }
 
@@ -46,6 +51,17 @@ export default function SendPicture() {
         } catch (error) {
             setUploadStatus('error');
         }
+    };
+
+    const handleStartCamera = () => {
+        if (!userName.trim()) {
+            toast.warn('Por favor, insira seu nome antes de ligar a câmera.');
+            setTimeout(() => {
+                window.location.reload();
+            }, 1500);
+            return;
+        }
+        setShowCamera(true);
     };
 
     return (
@@ -74,9 +90,8 @@ export default function SendPicture() {
 
                 <div className={tw`space-y-6`}>
                     <button
-                        onClick={() => setShowCamera(true)}
-                        disabled={!userName}
-                        className={tw`w-full py-2 px-4 rounded mt-4 text-white ${userName ? 'bg-indigo-600 hover:bg-indigo-700' : 'bg-gray-400 cursor-not-allowed'}`}
+                        onClick={() => handleStartCamera()}
+                        className={tw`w-full py-2 px-4 rounded mt-4 text-white bg-indigo-600 hover:bg-indigo-700' `}
                     >
                         Ligar câmera
                     </button>
