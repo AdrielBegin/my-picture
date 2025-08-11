@@ -1,6 +1,7 @@
 // src/app/components/uploads/camera-capture/camera-capture.tsx
 import { useRef, useState, useEffect } from 'react';
 import { Camera, X, RotateCcw, Check } from 'lucide-react';
+import { tw } from 'twind';
 
 type CameraCaptureProps = {
   onCapture: (file: File) => void;
@@ -185,6 +186,7 @@ export default function CameraCapture({ onCapture, onClose }: CameraCaptureProps
         const file = new File([blob], `foto-${Date.now()}.jpg`, { type: 'image/jpeg' });
         onCapture(file);
         stopCamera();
+        handleClose();
       } else {
         setError('Erro ao salvar a foto');
       }
@@ -210,32 +212,32 @@ export default function CameraCapture({ onCapture, onClose }: CameraCaptureProps
 
   if (error) {
     return (
-      <div className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50">
-        <div className="bg-white rounded-lg p-6 m-4 max-w-md w-full">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-gray-800">Erro na Câmera</h2>
+      <div className={tw`fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50`}>
+        <div className={tw`bg-white rounded-lg p-6 m-4 max-w-md w-full`}>
+          <div className={tw`flex items-center justify-between mb-4`}>
+            <h2 className={tw`text-lg font-semibold text-gray-800`}>Erro na Câmera</h2>
             <button
               onClick={handleClose}
-              className="text-gray-500 hover:text-gray-700 transition-colors"
+              className={tw`text-gray-500 hover:text-gray-700 transition-colors`}
             >
               <X size={24} />
             </button>
           </div>
 
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4">
-            <p className="text-sm">{error}</p>
+          <div className={tw`bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4`}>
+            <p className={tw`text-sm`}>{error}</p>
           </div>
 
-          <div className="flex gap-2">
+          <div className={tw`flex gap-2`}>
             <button
               onClick={startCamera}
-              className="flex-1 bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg font-medium transition-colors"
+              className={tw`flex-1 bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg font-medium transition-colors`}
             >
               Tentar Novamente
             </button>
             <button
               onClick={handleClose}
-              className="bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded-lg font-medium transition-colors"
+              className={tw`bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded-lg font-medium transition-colors`}
             >
               Fechar
             </button>
@@ -246,25 +248,25 @@ export default function CameraCapture({ onCapture, onClose }: CameraCaptureProps
   }
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-95 flex items-center justify-center z-50">
-      <div className="relative w-full h-full max-w-lg max-h-full flex flex-col">
+    <div className={tw`fullscreen-overlay inset-0 bg-black bg-opacity-95 flex items-center justify-center z-50`}>
+      <div className={tw`relative w-full h-full max-w-lg max-h-full flex flex-col`}>
         {/* Header */}
-        <div className="flex items-center justify-between p-4 text-white">
-          <h2 className="text-lg font-semibold">Tirar Foto</h2>
+        <div className={tw`flex items-center justify-between p-4 text-white`}>
+          <h2 className={tw`text-lg font-semibold`}>Tirar Foto</h2>
           <button
             onClick={handleClose}
-            className="text-white hover:text-gray-300 transition-colors"
+            className={tw`text-white hover:text-gray-300 transition-colors`}
           >
             <X size={24} />
           </button>
         </div>
 
         {/* Área da câmera/preview */}
-        <div className="flex-1 relative overflow-hidden">
+        <div className={tw`flex-1 relative overflow-hidden`}>
           {loading && (
-            <div className="absolute inset-0 flex items-center justify-center bg-gray-900 text-white z-10">
-              <div className="text-center">
-                <div className="animate-spin w-8 h-8 border-2 border-white border-t-transparent rounded-full mx-auto mb-2"></div>
+            <div className={tw`absolute inset-0 flex items-center justify-center bg-gray-900 text-white z-10`}>
+              <div className={tw`text-center`}>
+                <div className={tw`animate-spin w-8 h-8 border-2 border-white border-t-transparent rounded-full mx-auto mb-2`}></div>
                 <p>{isChangingCamera ? 'Alternando câmera...' : 'Carregando câmera...'}</p>
               </div>
             </div>
@@ -272,36 +274,36 @@ export default function CameraCapture({ onCapture, onClose }: CameraCaptureProps
 
           {capturedImage ? (
             // Preview da foto capturada
-            <div className="relative w-full h-full flex items-center justify-center bg-black">
+            <div className={tw`relative w-full h-full flex items-center justify-center bg-black`}>
               <img
                 src={capturedImage}
                 alt="Foto capturada"
-                className="max-w-full max-h-full object-contain"
+                className={tw`max-w-full max-h-full object-contain`}
               />
             </div>
           ) : (
             // Stream da câmera
-            <div className="relative w-full h-full">
+            <div className={tw`relative w-full h-full`}>
               <video
                 ref={videoRef}
                 autoPlay
                 playsInline
                 muted
-                className="w-full h-full object-cover"
+                className={tw`w-full h-full object-cover`}
               />
 
               {/* Flash effect */}
               {isCapturing && (
-                <div className="absolute inset-0 bg-white opacity-70 animate-pulse"></div>
+                <div className={tw`absolute inset-0 bg-white opacity-70 animate-pulse`}></div>
               )}
 
               {/* Grid de enquadramento */}
-              <div className="absolute inset-0 pointer-events-none">
-                <div className="w-full h-full border-2 border-white border-opacity-30 relative">
-                  <div className="absolute top-1/3 left-0 w-full border-t border-white border-opacity-30"></div>
-                  <div className="absolute top-2/3 left-0 w-full border-t border-white border-opacity-30"></div>
-                  <div className="absolute left-1/3 top-0 h-full border-l border-white border-opacity-30"></div>
-                  <div className="absolute left-2/3 top-0 h-full border-l border-white border-opacity-30"></div>
+              <div className={tw`absolute inset-0 pointer-events-none`}>
+                <div className={tw`w-full h-full border-2 border-white border-opacity-30 relative`}>
+                  <div className={tw`absolute top-1/3 left-0 w-full border-t border-white border-opacity-30`}></div>
+                  <div className={tw`absolute top-2/3 left-0 w-full border-t border-white border-opacity-30`}></div>
+                  <div className={tw`absolute left-1/3 top-0 h-full border-l border-white border-opacity-30`}></div>
+                  <div className={tw`absolute left-2/3 top-0 h-full border-l border-white border-opacity-30`}></div>
                 </div>
               </div>
             </div>
@@ -312,10 +314,10 @@ export default function CameraCapture({ onCapture, onClose }: CameraCaptureProps
         <div className="p-6">
           {capturedImage ? (
             // Controles para foto capturada
-            <div className="flex items-center justify-between">
+            <div className={tw`flex items-center justify-between`}>
               <button
                 onClick={retakePhoto}
-                className="flex items-center gap-2 bg-gray-600 hover:bg-gray-700 text-white py-3 px-6 rounded-full font-medium transition-colors"
+                className={tw`flex items-center gap-2 bg-gray-600 hover:bg-gray-700 text-white py-3 px-6 rounded-full font-medium transition-colors`}
               >
                 <RotateCcw size={20} />
                 Repetir
@@ -323,7 +325,7 @@ export default function CameraCapture({ onCapture, onClose }: CameraCaptureProps
 
               <button
                 onClick={confirmPhoto}
-                className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white py-3 px-6 rounded-full font-medium transition-colors"
+                className={tw`flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white py-3 px-6 rounded-full font-medium transition-colors`}
               >
                 <Check size={20} />
                 Usar Foto
@@ -331,12 +333,12 @@ export default function CameraCapture({ onCapture, onClose }: CameraCaptureProps
             </div>
           ) : (
             // Controles da câmera
-            <div className="flex items-center justify-between">
+            <div className={tw`flex items-center justify-between`}>
               {/* Botão para alternar câmera */}
               <button
                 onClick={switchCamera}
                 disabled={loading || isChangingCamera}
-                className="bg-gray-600 hover:bg-gray-700 disabled:bg-gray-800 text-white p-3 rounded-full transition-colors"
+                className={tw`bg-gray-600 hover:bg-gray-700 disabled:bg-gray-800 text-white p-3 rounded-full transition-colors`}
               >
                 <RotateCcw size={20} className={isChangingCamera ? 'animate-spin' : ''} />
               </button>
@@ -345,13 +347,13 @@ export default function CameraCapture({ onCapture, onClose }: CameraCaptureProps
               <button
                 onClick={takePhoto}
                 disabled={loading || !stream || isChangingCamera}
-                className="bg-white hover:bg-gray-100 disabled:bg-gray-300 disabled:cursor-not-allowed text-black p-4 rounded-full shadow-lg transition-all transform hover:scale-105 active:scale-95"
+                className={tw`bg-white hover:bg-gray-100 disabled:bg-gray-300 disabled:cursor-not-allowed text-black p-4 rounded-full shadow-lg transition-all transform hover:scale-105 active:scale-95`}
               >
                 <Camera size={28} />
               </button>
 
               {/* Espaço reservado para manter simetria */}
-              <div className="w-12 h-12"></div>
+              <div className={tw`w-12 h-12`}></div>
             </div>
           )}
         </div>
