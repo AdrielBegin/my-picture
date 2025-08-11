@@ -19,19 +19,19 @@ export default function Dashboard() {
   const loadData = async () => {
     try {
       setIsLoading(true);
-      
+
       const snapshot = await getDocs(collection(db, 'photos'));
       const items: Photo[] = snapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data(),
       } as Photo));
-      
+
       const eventSnapshot = await getDocs(collection(db, 'events'));
       const eventItems: Event[] = eventSnapshot.docs.map(doc => ({
         eventId: doc.id,
         ...doc.data(),
       } as Event));
-      
+
       setEvents(eventItems);
       setPhotos(items);
       setFilteredPhotos(items);
@@ -68,20 +68,20 @@ export default function Dashboard() {
           <p className={tw`text-gray-600`}>Gerencie as fotos enviadas pelos usuários organizadas por eventos</p>
         </div>
       </header>
-      
+
       <Stats photos={photos} />
       <Filters events={events} onFilter={handleFilter} />
-      
+
       {isLoading ? (
         <div className={tw`text-center py-12`}>Carregando fotos...</div>
       ) : (
-        <EventGrid 
-          photos={filteredPhotos} 
-          events={events} 
+        <EventGrid
+          photos={filteredPhotos.slice(0, 12)}
+          events={events}
           onPhotoDelete={handlePhotoDelete}
         />
       )}
-      
+
       <ModalCadastroEvento />
     </div>
   );
