@@ -12,11 +12,11 @@ import {
   writeBatch 
 } from 'firebase/firestore';
 
-// Tipo para os parâmetros da rota
+// Tipo para os parâmetros da rota (CORRIGIDO)
 interface RouteParams {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 /**
@@ -28,7 +28,8 @@ export async function DELETE(
   { params }: RouteParams
 ): Promise<NextResponse> {
   try {
-    const { id } = params;
+    // AWAIT dos parâmetros (CORRIGIDO)
+    const { id } = await params;
 
     // Validação do ID
     if (!id || typeof id !== 'string') {
