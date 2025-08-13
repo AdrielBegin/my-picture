@@ -21,14 +21,6 @@ export default function SendPicture() {
 
             if (userName) {
                 formData.append('userName', userName);
-            } else if (!userName) {
-                toast.warn('Por favor, insira seu nome antes de enviar a foto.');
-
-                setTimeout(() => {
-                    window.location.reload();
-                }, 1500);
-
-                return;
             }
 
             setUploadStatus('loading');
@@ -53,14 +45,7 @@ export default function SendPicture() {
         }
     };
 
-    const handleStartCamera = () => {
-        if (!userName.trim()) {
-            toast.warn('Por favor, insira seu nome antes de ligar a câmera.');
-            setTimeout(() => {
-                window.location.reload();
-            }, 1500);
-            return;
-        }
+    const handleStartCamera = () => {        
         setShowCamera(true);
     };
 
@@ -74,8 +59,7 @@ export default function SendPicture() {
                     <h1 className={tw`text-2xl font-bold text-center text-indigo-600 mb-6`}>
                         📸 Envie sua foto da festa!
                     </h1>
-                    <label htmlFor="nome" className={tw`block font-medium text-gray-700 mb-1`}>Nome
-                        <span className={tw`text-red-500`}>*</span>
+                    <label htmlFor="nome" className={tw`block font-medium text-gray-700 mb-1`}>Nome                        
                     </label>
                     <input
                         type="text"

@@ -6,19 +6,18 @@ import PhotoExpandedModal from '../modal-expanded-photo/modal-expanded-photo';
 
 type PhotoGridProps = {
   photos: Photo[];
+  onPhotoDelete?: () => void;
 };
 
-export default function PhotoGrid({ photos }: PhotoGridProps) {
+export default function PhotoGrid({ photos, onPhotoDelete }: PhotoGridProps) {
   const [currentIndex, setCurrentIndex] = useState<number | null>(null);
 
-  const handleOpenModal = (index: number) => {
-    console.log('Abrindo modal para índice:', index); // Debug
+  const handleOpenModal = (index: number) => {    
     setCurrentIndex(index);
   };
 
-  const handleCloseModal = () => {
-    console.log('Fechando modal'); // Debug
-    setCurrentIndex(null);
+  const handleCloseModal = () => {    
+    setCurrentIndex(null);  
   };
 
   const handlePrev = () => {
@@ -36,7 +35,9 @@ export default function PhotoGrid({ photos }: PhotoGridProps) {
   if (photos.length === 0) {
     return (
       <div className={tw`text-center py-12 text-gray-500`}>
-        Nenhuma foto encontrada com esses filtros.
+        <div className={tw`text-6xl mb-4`}>📷</div>
+        <h3 className={tw`text-xl font-semibold mb-2`}>Nenhuma foto encontrada</h3>
+        <p>Tente ajustar os filtros ou adicione novas fotos ao evento.</p>
       </div>
     );
   }
@@ -48,8 +49,7 @@ export default function PhotoGrid({ photos }: PhotoGridProps) {
           <PhotoCard
             key={photo.id}
             photo={photo}
-            onClick={() => {
-              console.log('PhotoCard clicado, índice:', index); // Debug
+            onClick={() => {              
               handleOpenModal(index);
             }}
           />

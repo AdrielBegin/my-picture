@@ -79,7 +79,7 @@ export default function Dashboard() {
         <div className={tw`text-center py-12`}>Carregando eventos...</div>
       ) : (
         <EventGrid
-          photos={filteredPhotos.slice(0, 12)}
+          photos={filteredPhotos.slice(0, 13)}
           events={events}
           onPhotoDelete={handlePhotoDelete}
         />

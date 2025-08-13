@@ -20,13 +20,12 @@ export default function PhotoCard({ photo, onDeleteSuccess, onClick }: PhotoCard
   };
 
   const handleDelete = (e: React.MouseEvent) => {
-    e.stopPropagation(); // Evita que o clique no botão abra o modal de imagem
+    e.stopPropagation();
     setIsDeleteModalOpen(true);
   };
 
   const handleConfirmDelete = async () => {
     setIsDeleting(true);
-
     try {
       const response = await fetch(`/api/delete-picture/${photo.id}`, {
         method: 'DELETE',
@@ -41,11 +40,9 @@ export default function PhotoCard({ photo, onDeleteSuccess, onClick }: PhotoCard
       toast.success('Foto excluída com sucesso!');
       onDeleteSuccess?.();
       window.location.reload();
-
     } catch (error) {
       console.error('Erro ao excluir foto:', error);
       toast.error('Erro ao excluir foto. Tente novamente.');
-
     } finally {
       setIsDeleting(false);
       setIsDeleteModalOpen(false);
@@ -53,7 +50,7 @@ export default function PhotoCard({ photo, onDeleteSuccess, onClick }: PhotoCard
   };
 
   const handleCardClick = () => {
-    console.log('Card clicado!', onClick); // Debug
+    console.log('Card clicado!', onClick);
     if (onClick) {
       onClick();
     } else {
@@ -67,14 +64,17 @@ export default function PhotoCard({ photo, onDeleteSuccess, onClick }: PhotoCard
         className={tw`bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow cursor-pointer`}
         onClick={() => { handleCardClick() }}
       >
-        <Image
-          src={photo.url}
-          alt={`Foto enviada por ${photo.userName || 'usuário'}`}
-          width={400}
-          height={192}
-          className={tw`object-cover`}
-        />
-
+        {/* Container com altura fixa para a imagem */}
+        <div className={tw`relative w-full h-48`}>
+          <Image
+            src={photo.url}
+            alt={`Foto enviada por ${photo.userName || 'usuário'}`}
+            fill
+            className={tw`object-cover`}
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          />
+        </div>
+        
         <div className={tw`p-4`}>
           <h3 className={tw`font-medium text-gray-800 truncate`}>
             {photo.userName || 'Anônimo'}
