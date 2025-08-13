@@ -4,10 +4,11 @@ import { NextResponse } from 'next/server';
 
 export async function GET(
   request: Request,
-  { params }: { params: { eventId: string } }
+  { params }: { params: Promise<{ eventId: string }> }
 ) {
   try {
-    const { eventId } = params;
+    // Aguarda a resolução dos parâmetros
+    const { eventId } = await params;
 
     if (!eventId) {
       return NextResponse.json(
