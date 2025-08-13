@@ -2,6 +2,7 @@
 import { useRef, useState, useEffect } from 'react';
 import { Camera, X, RotateCcw, Check } from 'lucide-react';
 import { tw } from 'twind';
+import Image from 'next/image';
 
 type CameraCaptureProps = {
   onCapture: (file: File) => void;
@@ -24,12 +25,12 @@ export default function CameraCapture({ onCapture, onClose }: CameraCaptureProps
       stream.getTracks().forEach(track => track.stop());
       setStream(null);
     }
-    
+
     // Limpa o srcObject do vídeo
     if (videoRef.current) {
       videoRef.current.srcObject = null;
     }
-    
+
     setCapturedImage(null);
     setError(null);
   };
@@ -77,23 +78,23 @@ export default function CameraCapture({ onCapture, onClose }: CameraCaptureProps
 
       if (videoRef.current) {
         videoRef.current.srcObject = mediaStream;
-        
+
         // Aguarda o video estar pronto antes de tentar reproduzir
         await new Promise((resolve, reject) => {
           const video = videoRef.current!;
-          
+
           const handleLoadedMetadata = () => {
             video.removeEventListener('loadedmetadata', handleLoadedMetadata);
             video.removeEventListener('error', handleError);
             resolve(void 0);
           };
-          
+
           const handleError = (e: Event) => {
             video.removeEventListener('loadedmetadata', handleLoadedMetadata);
             video.removeEventListener('error', handleError);
             reject(e);
           };
-          
+
           video.addEventListener('loadedmetadata', handleLoadedMetadata);
           video.addEventListener('error', handleError);
         });
@@ -107,7 +108,7 @@ export default function CameraCapture({ onCapture, onClose }: CameraCaptureProps
           await new Promise(resolve => setTimeout(resolve, 100));
           await videoRef.current.play();
         }
-        
+
         setStream(mediaStream);
       }
     } catch (error) {
@@ -167,6 +168,12 @@ export default function CameraCapture({ onCapture, onClose }: CameraCaptureProps
       return;
     }
 
+    // Se for câmera frontal, espelha a imagem no canvas para que a foto final seja normal
+    if (facingMode === 'user') {
+      context.scale(-1, 1);
+      context.translate(-canvas.width, 0);
+    }
+
     // Desenha o frame atual do vídeo no canvas
     context.drawImage(video, 0, 0);
 
@@ -200,7 +207,7 @@ export default function CameraCapture({ onCapture, onClose }: CameraCaptureProps
 
   const switchCamera = async () => {
     if (isChangingCamera || loading) return;
-    
+
     setIsChangingCamera(true);
     setFacingMode(prev => prev === 'user' ? 'environment' : 'user');
   };
@@ -275,9 +282,12 @@ export default function CameraCapture({ onCapture, onClose }: CameraCaptureProps
           {capturedImage ? (
             // Preview da foto capturada
             <div className={tw`relative w-full h-full flex items-center justify-center bg-black`}>
-              <img
+              <Image
                 src={capturedImage}
                 alt="Foto capturada"
+                layout="responsive"
+                width={500} 
+                height={500}
                 className={tw`max-w-full max-h-full object-contain`}
               />
             </div>
@@ -289,7 +299,7 @@ export default function CameraCapture({ onCapture, onClose }: CameraCaptureProps
                 autoPlay
                 playsInline
                 muted
-                className={tw`w-full h-full object-cover`}
+                className={tw`w-full h-full object-cover ${facingMode === 'user' ? 'transform scale-x-[-1]' : ''}`}
               />
 
               {/* Flash effect */}
