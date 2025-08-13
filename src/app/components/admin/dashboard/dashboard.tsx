@@ -5,7 +5,7 @@ import { db } from '@/lib/firebase';
 import { Photo } from '@/types/photo';
 import Stats from '../stats/stats';
 import Filters from '../filters/filters';
-import EventGrid from '../event-grid/event-grid'; // Importa o novo componente
+import EventGrid from '../event-grid/event-grid';
 import ModalCadastroEvento from '../modal-cadastrar-evento/modal-cadastrar-evento';
 import { Event } from '@/types/event';
 import { tw } from 'twind';
@@ -56,16 +56,19 @@ export default function Dashboard() {
   };
 
   const handlePhotoDelete = () => {
-    // Recarrega os dados após exclusão de uma foto
     loadData();
   };
 
   return (
     <div className={tw`min-h-screen bg-gray-50 p-6`}>
       <header className={tw`mb-8`}>
-        <h1 className={tw`text-3xl font-bold text-gray-800`}>📸 Dashboard de Fotos</h1>
-        <div className={tw`space-y-2 mt-2`}>
-          <p className={tw`text-gray-600`}>Gerencie as fotos enviadas pelos usuários organizadas por eventos</p>
+        <div className={tw`flex justify-between items-start mb-4`}>
+          <div>
+            <h1 className={tw`text-3xl font-bold text-gray-800`}>📸 Dashboard de Fotos</h1>
+            <div className={tw`space-y-2 mt-2`}>
+              <p className={tw`text-gray-600`}>Gerencie as fotos enviadas pelos usuários organizadas por eventos</p>
+            </div>
+          </div>
         </div>
       </header>
 
@@ -73,7 +76,7 @@ export default function Dashboard() {
       <Filters events={events} onFilter={handleFilter} />
 
       {isLoading ? (
-        <div className={tw`text-center py-12`}>Carregando fotos...</div>
+        <div className={tw`text-center py-12`}>Carregando eventos...</div>
       ) : (
         <EventGrid
           photos={filteredPhotos.slice(0, 12)}
@@ -84,5 +87,6 @@ export default function Dashboard() {
 
       <ModalCadastroEvento />
     </div>
+
   );
 }

@@ -4,7 +4,8 @@ import { tw } from 'twind';
 import axios from 'axios';
 import QRCode from 'qrcode';
 import { toast } from 'react-toastify';
-
+import LogoutButton from '../logout/logout';
+import { FiPlusCircle } from 'react-icons/fi';
 // Definindo o tipo para os dados do evento
 interface EventData {
   eventName: string;
@@ -70,31 +71,34 @@ export default function ModalCadastroEvento() {
 
   return (
     <div className={tw`absolute top-10 right-6 z-50`}>
-      <button
-        className={tw`
-            bg-blue-600 text-white 
-            px-4 py-2 md:px-5 md:py-3 
-            rounded-xl hover:bg-blue-700 active:bg-blue-800 
-            shadow-lg hover:shadow-xl active:shadow-inner 
-            transition duration-300 ease-in-out 
-            flex items-center gap-2 md:gap-3 
-            font-semibold text-sm md:text-base 
-            select-none focus:outline-none focus:ring-4 focus:ring-blue-300
+      {/* Container para os botões lado a lado */}
+      <div className={tw`flex items-center gap-3`}>
+        {/* Botão Logout à esquerda */}
+        <div className={tw`fixed top-10 right-6 z-50`}>
+          <LogoutButton />
+        </div>
+        <div className={tw`fixed top-10 right-35  z-50`}>
+          {/* Botão Cadastrar Evento à direita */}
+          <button
+            className={tw`
+              bg-blue-600 text-white 
+              px-3 py-1.5 md:px-4 md:py-2 
+              rounded-lg hover:bg-blue-700 active:bg-blue-800 
+              shadow-md hover:shadow-lg active:shadow-inner 
+              transition duration-300 ease-in-out 
+              flex items-center gap-1.5 md:gap-2 
+              font-semibold text-sm md:text-sm 
+              select-none focus:outline-none focus:ring-4 focus:ring-blue-300
             `}
-        onClick={() => setIsOpen(true)}
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none" viewBox="0 0 24 24" stroke="currentColor"
-          className="w-5 h-5 md:w-6 md:h-6"
-          aria-hidden="true"
-          focusable="false"
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-        </svg>
-        <span className={tw`hidden sm:inline`}>Cadastrar Evento</span>
-      </button>
+            onClick={() => setIsOpen(true)}
+          >
+            <FiPlusCircle className="w-6 h-6" />
+            <span className={tw`hidden sm:inline`}>Cadastrar Evento</span>
+          </button>
+        </div>
+      </div>
 
+      {/* Modal permanece o mesmo */}
       {isOpen && (
         <>
           <div
@@ -107,6 +111,7 @@ export default function ModalCadastroEvento() {
               className={tw`bg-white rounded-2xl shadow-2xl p-6 w-full max-w-md`}
               onClick={(e) => e.stopPropagation()}
             >
+              {/* Resto do modal permanece igual... */}
               {/* Cabeçalho */}
               <div className={tw`flex justify-between items-center mb-6`}>
                 <h2 className={tw`text-2xl font-bold text-gray-800`}>Cadastrar Evento</h2>

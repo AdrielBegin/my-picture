@@ -109,7 +109,7 @@ export default function ModalQRCode({ isOpen, eventId, eventName, eventUrl, onCl
             setError('Erro ao gerar QR Code. Verifique se a URL é válida.');
         }
     };
-   
+
     // Copia a URL para a área de transferência
     const handleCopyUrl = async () => {
         const urlToCopy = eventData?.urlQrCode || eventUrl;
@@ -130,6 +130,7 @@ export default function ModalQRCode({ isOpen, eventId, eventName, eventUrl, onCl
 
     // Baixa o QR Code como PDF
     const handleDownloadPDF = () => {
+
         if (!qrCodeImage || !eventData) {
             toast.error('QR Code não disponível para download');
             return;
@@ -153,7 +154,7 @@ export default function ModalQRCode({ isOpen, eventId, eventName, eventUrl, onCl
             pdf.setFontSize(14);
 
             const eventInfo = [
-                `Nome: ${eventData.eventName}`,
+                `Nome do Evento: ${eventName}`,
                 eventData.local ? `Local: ${eventData.local}` : '',
                 eventData.typeEvent ? `Tipo: ${eventData.typeEvent}` : '',
                 eventData.dataEvent ? `Data: ${new Date(eventData.dataEvent.toDate()).toLocaleDateString('pt-BR')}` : ''
@@ -194,7 +195,7 @@ export default function ModalQRCode({ isOpen, eventId, eventName, eventUrl, onCl
             const footerX = (pageWidth - footerWidth) / 2;
             pdf.text(footerText, footerX, pageHeight - 20);
 
-            const eventNameSafe = eventData.eventName ? eventData.eventName.replace(/\s+/g, '_') : 'Evento_Desconhecido';
+            const eventNameSafe = eventName ? eventName.replace(/\s+/g, '_') : 'Evento_Desconhecido';
             const fileName = `QRCode_${eventNameSafe}_${new Date().getTime()}.pdf`;
             pdf.save(fileName);
 
@@ -289,7 +290,7 @@ export default function ModalQRCode({ isOpen, eventId, eventName, eventUrl, onCl
 
                                 {/* QR Code */}
                                 <div className={tw`flex justify-center mb-6`}>
-                                    <div className={tw`bg-white p-4 rounded-lg shadow-md border`}>                                       
+                                    <div className={tw`bg-white p-4 rounded-lg shadow-md border`}>
 
                                         <Image
                                             src={qrCodeImage}

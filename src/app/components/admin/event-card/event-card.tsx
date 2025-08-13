@@ -192,7 +192,7 @@ export default function EventCard({ event, photos, onPhotoDelete, onEventDelete 
 
         {/* Conteúdo Expandível com as Fotos */}
         {isExpanded && (
-          <div className={tw`p-4 h-[800px] overflow-y-auto`}>
+          <div className={tw`p-4 overflow-y-auto`}>
             <div className={tw`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4`}>
               {photos.map((photo, index) => (
                 <PhotoCard
