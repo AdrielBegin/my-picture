@@ -77,7 +77,6 @@ export default function ModalQRCode({ isOpen, eventId, eventName, eventUrl, onCl
             console.error('Erro ao buscar dados do evento:', error);
             setError('Erro ao carregar dados do evento');
 
-            // Se falhar ao buscar, tenta gerar QR Code com a URL fornecida
             if (eventUrl) {
                 await generateQRCode(eventUrl);
             }
@@ -228,7 +227,7 @@ export default function ModalQRCode({ isOpen, eventId, eventName, eventUrl, onCl
         <>
             {/* Overlay */}
             <div
-                className={tw`fullscreen-overlay inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-50 flex items-center justify-center p-4`}
+                className={tw`fullscreen-overlay inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-50 flex items-center justify-center p-4 z-[9999]`}
                 onClick={onClose}
             >
                 {/* Modal */}
