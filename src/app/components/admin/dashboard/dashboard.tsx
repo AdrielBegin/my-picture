@@ -60,7 +60,7 @@ export default function Dashboard() {
   };
 
   return (
-    <div className={tw`min-h-screen bg-gray-50 p-6`}>
+    <div className={tw`min-h-screen bg-gray-50 p-6 relative`}>
       <header className={tw`mb-8`}>
         <div className={tw`flex justify-between items-start mb-4`}>
           <div>

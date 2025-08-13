@@ -73,28 +73,29 @@ export default function ModalCadastroEvento() {
     <div className={tw`absolute top-10 right-6 z-50`}>
       {/* Container para os botões lado a lado */}
       <div className={tw`flex items-center gap-3`}>
-        {/* Botão Logout à esquerda */}
-        <div className={tw`fixed top-10 right-6 z-50`}>
-          <LogoutButton />
-        </div>
-        <div className={tw`fixed top-10 right-35  z-50`}>
-          {/* Botão Cadastrar Evento à direita */}
+        {/* Botão Cadastrar Evento à esquerda - REMOVIDO position fixed */}
+        <div>
           <button
             className={tw`
-              bg-blue-600 text-white 
-              px-3 py-1.5 md:px-4 md:py-2 
-              rounded-lg hover:bg-blue-700 active:bg-blue-800 
-              shadow-md hover:shadow-lg active:shadow-inner 
-              transition duration-300 ease-in-out 
-              flex items-center gap-1.5 md:gap-2 
-              font-semibold text-sm md:text-sm 
-              select-none focus:outline-none focus:ring-4 focus:ring-blue-300
-            `}
+            bg-blue-600 text-white 
+            px-3 py-1.5 md:px-4 md:py-2 
+            rounded-lg hover:bg-blue-700 active:bg-blue-800 
+            shadow-md hover:shadow-lg active:shadow-inner 
+            transition duration-300 ease-in-out 
+            flex items-center gap-1.5 md:gap-2 
+            font-semibold text-sm md:text-sm 
+            select-none focus:outline-none focus:ring-4 focus:ring-blue-300
+          `}
             onClick={() => setIsOpen(true)}
           >
             <FiPlusCircle className="w-6 h-6" />
             <span className={tw`hidden sm:inline`}>Cadastrar Evento</span>
           </button>
+        </div>
+
+        {/* Botão Logout à direita - REMOVIDO position fixed */}
+        <div>
+          <LogoutButton />
         </div>
       </div>
 
