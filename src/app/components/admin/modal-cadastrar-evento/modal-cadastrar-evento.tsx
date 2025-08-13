@@ -1,12 +1,9 @@
 'use client';
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import { tw } from 'twind';
 import axios from 'axios';
 import QRCode from 'qrcode';
 import { toast } from 'react-toastify';
-// Importe o jsPDF
-import jsPDF from 'jspdf';
-import { FiLink } from 'react-icons/fi';
 
 // Definindo o tipo para os dados do evento
 interface EventData {
@@ -21,6 +18,7 @@ export default function ModalCadastroEvento() {
   const [form, setForm] = useState({ eventName: '', local: '', typeEvent: '', dataEvent: '' });
   const [qrUrl, setQrUrl] = useState('');
   const [eventData, setEventData] = useState<EventData | null>(null);
+  const [savedQrCode, setSavedQrCode] = useState(''); // QR Code salvo no banco
 
   const eventTypes = ["Casamento", "Aniversário", "Palestra", "Workshop", "Festa Corporativa", "Formatura", "Chá de Bebê", "Encontro Religioso", "Lançamento de Produto", "Show Musical"];
 
@@ -33,121 +31,40 @@ export default function ModalCadastroEvento() {
       toast.warn('Por favor, preencha todos os campos obrigatórios.');
       return;
     }
+
     try {
+      // Agora a API já gera e salva o QR Code automaticamente
       const response = await axios.post('/api/create-events', form);
-      const { url } = response.data;
+      const { url, qrCodeGenerated } = response.data;
 
       setQrUrl(url);
       setEventData(form);
+
+      if (qrCodeGenerated) {
+        generateQrCodeForDisplay(url);
+      }
+
       setForm({ eventName: '', local: '', typeEvent: '', dataEvent: '' });
       setIsOpen(false);
-
       toast.success('Evento cadastrado com sucesso!');
+
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
+
     } catch (error) {
+      console.error('Erro ao cadastrar evento:', error);
       toast.error('Erro ao cadastrar evento. Tente novamente.');
     }
   };
 
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-
-  useEffect(() => {
-    if (qrUrl && canvasRef.current) {
-      QRCode.toCanvas(canvasRef.current, qrUrl, { width: 200 }, (error) => {
-        if (error) {
-          console.error('Erro ao gerar QR Code:', error);
-        } else {
-          setTimeout(() => {
-            downloadQRCodePDF();
-          }, 500);
-        }
-      });
-    }
-  }, [qrUrl]);
-
-  // Função para baixar o QR Code como PDF
-  const downloadQRCodePDF = () => {
-    if (!canvasRef.current || !eventData) {
-      toast.error('QR Code não disponível para download.');
-      return;
-    }
-
+  // Gera QR Code apenas para exibição (já foi salvo no banco pela API)
+  const generateQrCodeForDisplay = async (url: string) => {
     try {
-      // Cria uma nova instância do jsPDF
-      const pdf = new jsPDF();
-
-      // Dimensões da página (A4: 210mm x 297mm, em pontos: ~595 x 842)
-      const pageWidth = pdf.internal.pageSize.getWidth();
-      const pageHeight = pdf.internal.pageSize.getHeight();
-
-      // Margens
-      const margin = 20;
-      const contentWidth = pageWidth - (margin * 2);
-
-      // ===== TÍTULO CENTRALIZADO =====
-      pdf.setFontSize(22);
-      pdf.setFont('helvetica', 'bold');
-      const title = 'QR Code do Evento';
-      const titleWidth = pdf.getTextWidth(title);
-      const titleX = (pageWidth - titleWidth) / 2;
-      pdf.text(title, titleX, 40);
-
-      // ===== INFORMAÇÕES DO EVENTO CENTRALIZADAS =====
-      pdf.setFont('helvetica', 'normal');
-      pdf.setFontSize(14);
-
-      const eventInfo = [
-        `Nome do Evento: ${eventData.eventName}`,
-        `Local do Evento: ${eventData.local}`,
-        `Tipo do Evento: ${eventData.typeEvent}`,
-        `Data do Evento: ${new Date(eventData.dataEvent).toLocaleDateString('pt-BR')}`
-      ];
-
-      let currentY = 70;
-      eventInfo.forEach((info) => {
-        const infoWidth = pdf.getTextWidth(info);
-        const infoX = (pageWidth - infoWidth) / 2;
-        pdf.text(info, infoX, currentY);
-        currentY += 20;
-      });
-
-      // ===== QR CODE CENTRALIZADO =====
-      const canvasDataURL = canvasRef.current.toDataURL('image/png');
-      const qrSize = 100; // Tamanho do QR Code
-      const qrX = (pageWidth - qrSize) / 2;
-      const qrY = currentY + 20;
-
-      pdf.addImage(canvasDataURL, 'PNG', qrX, qrY, qrSize, qrSize);
-
-      // ===== URL CENTRALIZADA =====
-      pdf.setFontSize(10);
-      pdf.setFont('helvetica', 'italic');
-      const urlY = qrY + qrSize + 30;
-
-      // Quebra a URL em linhas se for muito longa
-      const urlLines = pdf.splitTextToSize(`${qrUrl}`, contentWidth);
-
-      urlLines.forEach((line: string, index: number) => {
-        const lineWidth = pdf.getTextWidth(line);
-        const lineX = (pageWidth - lineWidth) / 2;
-        pdf.text(line, lineX, urlY + (index * 12));
-      });
-
-      // ===== RODAPÉ CENTRALIZADO (OPCIONAL) =====
-      pdf.setFontSize(8);
-      pdf.setFont('helvetica', 'normal');
-      const footerText = `Gerado em ${new Date().toLocaleDateString('pt-BR')} às ${new Date().toLocaleTimeString('pt-BR')}`;
-      const footerWidth = pdf.getTextWidth(footerText);
-      const footerX = (pageWidth - footerWidth) / 2;
-      pdf.text(footerText, footerX, pageHeight - 20);
-
-      // Salva o PDF
-      const fileName = `QRCode_${eventData.eventName.replace(/\s+/g, '_')}_${new Date().getTime()}.pdf`;
-      pdf.save(fileName);
-
-      toast.success('PDF baixado automaticamente!');
+      const qrCodeDataURL = await QRCode.toDataURL(url, { width: 200 });
+      setSavedQrCode(qrCodeDataURL);
     } catch (error) {
-      console.error('Erro ao gerar PDF:', error);
-      toast.error('Erro ao gerar PDF. Tente novamente.');
+      console.error('Erro ao gerar QR Code para exibição:', error);
     }
   };
 
@@ -293,64 +210,6 @@ export default function ModalCadastroEvento() {
             </div>
           </div>
         </>
-      )}
-
-      {qrUrl && (
-        <div className={tw`fixed bottom-10 right-6 bg-white p-4 rounded-xl shadow-xl text-center z-50 max-w-xs`}>
-          <h3 className={tw`text-lg font-semibold mb-2`}>QR Code do evento:</h3>
-          <canvas ref={canvasRef} width={200} height={200} />
-          <a
-            href={qrUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="Abrir link gerado para o evento"
-            title="Abrir link do evento"
-            className={tw`
-                          flex items-center gap-2
-                          px-3 py-1 
-                          bg-blue-100 text-blue-800 
-                          rounded-full font-medium
-                          hover:bg-blue-200 transition
-                          shadow-sm
-                        `}
-          >
-            <FiLink size={18} />
-            <span>Abrir link do evento</span>
-          </a>
-
-          {/* Botão para baixar PDF - agora opcional já que o download é automático */}
-          <button
-            onClick={downloadQRCodePDF}
-            className={tw`
-              mt-3 w-full bg-green-600 text-white 
-              px-4 py-2 rounded-lg hover:bg-green-700 
-              transition-colors shadow-md
-              flex items-center justify-center gap-2
-            `}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className={tw`h-4 w-4`}
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-            </svg>
-            Baixar PDF Novamente
-          </button>
-
-          {/* Botão para fechar */}
-          <button
-            onClick={() => setQrUrl('')}
-            className={tw`
-              mt-2 text-gray-500 hover:text-gray-700 
-              transition-colors text-sm underline
-            `}
-          >
-            Fechar
-          </button>
-        </div>
       )}
     </div>
   );

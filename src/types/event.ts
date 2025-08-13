@@ -8,4 +8,6 @@ export type Event = {
   local?: string;
   typeEvent?: string;
   urlQrCode?: string | null;
+  qrCodeImage?: string;
+  qrCodeGeneratedAt?: Date;
 };

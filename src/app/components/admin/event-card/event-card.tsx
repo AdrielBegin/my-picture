@@ -5,8 +5,10 @@ import { useState } from 'react';
 import PhotoCard from '../photo-card/photo-card';
 import PhotoExpandedModal from '../modal-expanded-photo/modal-expanded-photo';
 import ModalDeleteEvent from '../modal-delete-event/modal-delete-event';
+import ModalQRCode from '../modal-qr-code/modal-qr-code';
 import { toast } from 'react-toastify';
 import { FiLink } from "react-icons/fi";
+import { QrCode } from "lucide-react";
 
 type EventCardProps = {
   event: Event | {
@@ -25,8 +27,7 @@ export default function EventCard({ event, photos, onPhotoDelete, onEventDelete 
   const [isExpanded, setIsExpanded] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-
-  // Estados para o modal de imagem expandida
+  const [showQRCodeModal, setShowQRCodeModal] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState<number | null>(null);
 
   const formatDate = (timestamp?: Date) => {
@@ -39,12 +40,10 @@ export default function EventCard({ event, photos, onPhotoDelete, onEventDelete 
 
   // Funções para o modal de imagem
   const handleOpenImageModal = (index: number) => {
-    console.log('Abrindo modal de imagem para índice:', index);
     setCurrentImageIndex(index);
   };
 
   const handleCloseImageModal = () => {
-    console.log('Fechando modal de imagem');
     setCurrentImageIndex(null);
   };
 
@@ -58,6 +57,11 @@ export default function EventCard({ event, photos, onPhotoDelete, onEventDelete 
     setCurrentImageIndex((prev) =>
       prev !== null ? (prev + 1) % photos.length : prev
     );
+  };
+  
+  const handleShowQRCode = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setShowQRCodeModal(true);
   };
 
   // Função para deletar o evento
@@ -121,28 +125,27 @@ export default function EventCard({ event, photos, onPhotoDelete, onEventDelete 
                 {photos.length} {photos.length === 1 ? 'foto' : 'fotos'}
               </span>
 
-              {/* <a href={event.urlQrCode || '#'} target="_blank" rel="noopener noreferrer" className={tw`font-medium text-blue-600 dark:text-blue-500 hover:underline`}>
-                🔗
-              </a> */}
-
               <a
                 href={event.urlQrCode || '#'}
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Abrir link gerado para o evento"
                 title="Abrir link do evento"
-                className={tw`
-                flex items-center gap-2
-                px-3 py-1 
-                bg-blue-100 text-blue-800 
-                rounded-full font-medium
-                hover:bg-blue-200 transition
-                shadow-sm
-              `}
+                className={tw`flex items-center gap-2 px-3 py-1 bg-blue-100 text-blue-800 rounded-full font-medium hover:bg-blue-200 transition shadow-sm`}
               >
-                <FiLink size={18} />
-                <span>Abrir link do evento</span>
+                <FiLink size={16} />
+                <span className={tw`hidden sm:inline`}>Link</span>
               </a>
+
+              {/* ✅ Botão para mostrar o QR Code salvo no banco */}
+              <button
+                onClick={handleShowQRCode}
+                className={tw`flex items-center gap-2 px-3 py-1 bg-green-100 text-green-800 rounded-full font-medium hover:bg-green-200 transition shadow-sm`}
+                title="Ver QR Code do evento"
+              >
+                <QrCode size={16} />
+                <span className={tw`hidden sm:inline`}>QR Code</span>
+              </button>
 
               {/* Botão de deletar evento */}
               <button
@@ -196,7 +199,7 @@ export default function EventCard({ event, photos, onPhotoDelete, onEventDelete 
                   key={photo.id}
                   photo={photo}
                   onDeleteSuccess={onPhotoDelete}
-                  onClick={() => handleOpenImageModal(index)} // ✅ Adicionado!
+                  onClick={() => handleOpenImageModal(index)}
                 />
               ))}
             </div>
@@ -214,7 +217,16 @@ export default function EventCard({ event, photos, onPhotoDelete, onEventDelete 
         onConfirm={handleDeleteEvent}
       />
 
-      {/* ✅ Modal para exibir imagem expandida */}
+      {/* ✅ Modal para exibir o QR Code do evento */}
+      <ModalQRCode
+        isOpen={showQRCodeModal}
+        eventId={event.eventId}
+        eventName={event.eventName || 'Evento sem nome'}
+        eventUrl={event.urlQrCode || ''}
+        onClose={() => setShowQRCodeModal(false)}
+      />
+
+      {/* Modal para exibir imagem expandida */}
       {currentImageIndex !== null && (
         <PhotoExpandedModal
           photos={photos}
