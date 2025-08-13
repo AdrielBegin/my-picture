@@ -6,6 +6,7 @@ import QRCode from 'qrcode';
 import { toast } from 'react-toastify';
 // Importe o jsPDF
 import jsPDF from 'jspdf';
+import { FiLink } from 'react-icons/fi';
 
 // Definindo o tipo para os dados do evento
 interface EventData {
@@ -73,15 +74,15 @@ export default function ModalCadastroEvento() {
     try {
       // Cria uma nova instância do jsPDF
       const pdf = new jsPDF();
-      
+
       // Dimensões da página (A4: 210mm x 297mm, em pontos: ~595 x 842)
       const pageWidth = pdf.internal.pageSize.getWidth();
       const pageHeight = pdf.internal.pageSize.getHeight();
-      
+
       // Margens
       const margin = 20;
       const contentWidth = pageWidth - (margin * 2);
-      
+
       // ===== TÍTULO CENTRALIZADO =====
       pdf.setFontSize(22);
       pdf.setFont('helvetica', 'bold');
@@ -89,18 +90,18 @@ export default function ModalCadastroEvento() {
       const titleWidth = pdf.getTextWidth(title);
       const titleX = (pageWidth - titleWidth) / 2;
       pdf.text(title, titleX, 40);
-      
+
       // ===== INFORMAÇÕES DO EVENTO CENTRALIZADAS =====
       pdf.setFont('helvetica', 'normal');
       pdf.setFontSize(14);
-      
+
       const eventInfo = [
         `Nome do Evento: ${eventData.eventName}`,
         `Local do Evento: ${eventData.local}`,
         `Tipo do Evento: ${eventData.typeEvent}`,
         `Data do Evento: ${new Date(eventData.dataEvent).toLocaleDateString('pt-BR')}`
       ];
-      
+
       let currentY = 70;
       eventInfo.forEach((info) => {
         const infoWidth = pdf.getTextWidth(info);
@@ -108,29 +109,29 @@ export default function ModalCadastroEvento() {
         pdf.text(info, infoX, currentY);
         currentY += 20;
       });
-      
+
       // ===== QR CODE CENTRALIZADO =====
       const canvasDataURL = canvasRef.current.toDataURL('image/png');
       const qrSize = 100; // Tamanho do QR Code
       const qrX = (pageWidth - qrSize) / 2;
       const qrY = currentY + 20;
-      
+
       pdf.addImage(canvasDataURL, 'PNG', qrX, qrY, qrSize, qrSize);
-      
+
       // ===== URL CENTRALIZADA =====
       pdf.setFontSize(10);
       pdf.setFont('helvetica', 'italic');
       const urlY = qrY + qrSize + 30;
-      
+
       // Quebra a URL em linhas se for muito longa
       const urlLines = pdf.splitTextToSize(`${qrUrl}`, contentWidth);
-      
+
       urlLines.forEach((line: string, index: number) => {
         const lineWidth = pdf.getTextWidth(line);
         const lineX = (pageWidth - lineWidth) / 2;
         pdf.text(line, lineX, urlY + (index * 12));
       });
-      
+
       // ===== RODAPÉ CENTRALIZADO (OPCIONAL) =====
       pdf.setFontSize(8);
       pdf.setFont('helvetica', 'normal');
@@ -138,11 +139,11 @@ export default function ModalCadastroEvento() {
       const footerWidth = pdf.getTextWidth(footerText);
       const footerX = (pageWidth - footerWidth) / 2;
       pdf.text(footerText, footerX, pageHeight - 20);
-      
+
       // Salva o PDF
       const fileName = `QRCode_${eventData.eventName.replace(/\s+/g, '_')}_${new Date().getTime()}.pdf`;
       pdf.save(fileName);
-      
+
       toast.success('PDF baixado automaticamente!');
     } catch (error) {
       console.error('Erro ao gerar PDF:', error);
@@ -298,7 +299,24 @@ export default function ModalCadastroEvento() {
         <div className={tw`fixed bottom-10 right-6 bg-white p-4 rounded-xl shadow-xl text-center z-50 max-w-xs`}>
           <h3 className={tw`text-lg font-semibold mb-2`}>QR Code do evento:</h3>
           <canvas ref={canvasRef} width={200} height={200} />
-          <p className={tw`text-sm text-gray-500 mt-2 break-all`}>{qrUrl}</p>
+          <a
+            href={qrUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Abrir link gerado para o evento"
+            title="Abrir link do evento"
+            className={tw`
+                          flex items-center gap-2
+                          px-3 py-1 
+                          bg-blue-100 text-blue-800 
+                          rounded-full font-medium
+                          hover:bg-blue-200 transition
+                          shadow-sm
+                        `}
+          >
+            <FiLink size={18} />
+            <span>Abrir link do evento</span>
+          </a>
 
           {/* Botão para baixar PDF - agora opcional já que o download é automático */}
           <button

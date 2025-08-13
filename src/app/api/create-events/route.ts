@@ -1,6 +1,6 @@
 // src/app/api/create-events/route.ts
 import { db } from '@/lib/firebase';
-import { collection, addDoc } from 'firebase/firestore';
+import { collection, addDoc, updateDoc, doc } from 'firebase/firestore';
 import { NextResponse } from 'next/server';
 
 export async function POST(req: Request) {
@@ -19,10 +19,14 @@ export async function POST(req: Request) {
       createdAt: new Date(),
       dataEvent: body.dataEvent ? new Date(body.dataEvent + 'T12:00:00') : null,
     });
+
     const eventId = docRef.id;
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
     const eventUrl = `${baseUrl}/?eventId=${eventId}&&eventName=${encodeURIComponent(eventName)}`;
-    console.log(`Evento criado com ID: ${eventId}, URL: ${eventUrl}`);
+
+    await updateDoc(doc(db, 'events', eventId), {
+      urlQrCode: eventUrl
+    });
 
     return NextResponse.json({
       message: 'Evento criado com sucesso',

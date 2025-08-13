@@ -10,10 +10,11 @@ type EventGridProps = {
 };
 
 export default function EventGrid({ photos, events, onPhotoDelete }: EventGridProps) {
-  if (photos.length === 0) {
+  // Se não há eventos cadastrados, mostra mensagem
+  if (events.length === 0) {
     return (
       <div className={tw`text-center py-12 text-gray-500`}>
-        Nenhuma foto encontrada com esses filtros.
+        Nenhum evento cadastrado ainda.
       </div>
     );
   }
@@ -29,13 +30,9 @@ export default function EventGrid({ photos, events, onPhotoDelete }: EventGridPr
   }, {} as Record<string, Photo[]>);
 
   // Ordena os eventos por data (mais recentes primeiro)
-  const sortedEventIds = Object.keys(photosByEvent).sort((a, b) => {
-    const eventA = events.find(e => e.eventId === a);
-    const eventB = events.find(e => e.eventId === b);
-    
-    // Verifica se tem createdAt, caso contrário usa data
-    const dateA = eventA?.dataEvent || eventA?.dataEvent;
-    const dateB = eventB?.dataEvent || eventB?.dataEvent;
+  const sortedEvents = events.sort((a, b) => {
+    const dateA = a.dataEvent;
+    const dateB = b.dataEvent;
 
     if (!dateA && !dateB) return 0;
     if (!dateA) return 1;
@@ -46,22 +43,14 @@ export default function EventGrid({ photos, events, onPhotoDelete }: EventGridPr
 
   return (
     <div className={tw`space-y-4`}>
-      {sortedEventIds.map((eventId) => {
-        const event = events.find(e => e.eventId === eventId);
-        const eventPhotos = photosByEvent[eventId];
+      {sortedEvents.map((event) => {
+        // Pega as fotos do evento (se existirem)
+        const eventPhotos = photosByEvent[event.eventId] || [];
         
-        // Se não encontrar o evento, cria um evento placeholder
-        const displayEvent = event || {
-          eventId: eventId,
-          eventName: 'Evento não encontrado',
-          typeEvent: `Evento com ID: ${eventId}`,
-          dataEvent: null,
-        };
-
         return (
           <EventCard
-            key={eventId}
-            event={displayEvent}
+            key={event.eventId}
+            event={event}
             photos={eventPhotos}
             onPhotoDelete={onPhotoDelete}
           />

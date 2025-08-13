@@ -3,8 +3,10 @@ import { Photo } from '@/types/photo';
 import { Event } from '@/types/event';
 import { useState } from 'react';
 import PhotoCard from '../photo-card/photo-card';
+import PhotoExpandedModal from '../modal-expanded-photo/modal-expanded-photo';
 import ModalDeleteEvent from '../modal-delete-event/modal-delete-event';
 import { toast } from 'react-toastify';
+import { FiLink } from "react-icons/fi";
 
 type EventCardProps = {
   event: Event | {
@@ -12,10 +14,11 @@ type EventCardProps = {
     eventName: string;
     typeEvent: string;
     dataEvent: null;
+    urlQrCode?: string | null;
   };
   photos: Photo[];
   onPhotoDelete?: () => void;
-  onEventDelete?: (eventId: string) => void; // Novo prop para callback de delete
+  onEventDelete?: (eventId: string) => void;
 };
 
 export default function EventCard({ event, photos, onPhotoDelete, onEventDelete }: EventCardProps) {
@@ -23,12 +26,38 @@ export default function EventCard({ event, photos, onPhotoDelete, onEventDelete 
   const [isDeleting, setIsDeleting] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
+  // Estados para o modal de imagem expandida
+  const [currentImageIndex, setCurrentImageIndex] = useState<number | null>(null);
+
   const formatDate = (timestamp?: Date) => {
     return timestamp ? new Date(timestamp).toLocaleDateString('pt-BR') : 'N/A';
   };
 
   const toggleExpanded = () => {
     setIsExpanded(!isExpanded);
+  };
+
+  // Funções para o modal de imagem
+  const handleOpenImageModal = (index: number) => {
+    console.log('Abrindo modal de imagem para índice:', index);
+    setCurrentImageIndex(index);
+  };
+
+  const handleCloseImageModal = () => {
+    console.log('Fechando modal de imagem');
+    setCurrentImageIndex(null);
+  };
+
+  const handlePrevImage = () => {
+    setCurrentImageIndex((prev) =>
+      prev !== null ? (prev - 1 + photos.length) % photos.length : prev
+    );
+  };
+
+  const handleNextImage = () => {
+    setCurrentImageIndex((prev) =>
+      prev !== null ? (prev + 1) % photos.length : prev
+    );
   };
 
   // Função para deletar o evento
@@ -50,7 +79,6 @@ export default function EventCard({ event, photos, onPhotoDelete, onEventDelete 
       }
       toast.success('Evento deletado com sucesso!');
       window.location.reload();
-      // Chama o callback para notificar o componente pai
       onEventDelete?.(event.eventId);
 
     } catch (error) {
@@ -61,11 +89,6 @@ export default function EventCard({ event, photos, onPhotoDelete, onEventDelete 
       setShowDeleteConfirm(false);
     }
   };
-
-
-  if (photos.length === 0) {
-    return null; // Não exibe o card se não há fotos
-  }
 
   return (
     <>
@@ -80,6 +103,7 @@ export default function EventCard({ event, photos, onPhotoDelete, onEventDelete 
               <h2 className={tw`text-xl font-semibold text-gray-800`}>
                 {event.eventName || 'Evento sem nome'}
               </h2>
+
               {event.dataEvent && (
                 <p className={tw`text-sm text-gray-600 mt-1`}>
                   📅 {formatDate(event.dataEvent.toDate())}
@@ -87,7 +111,7 @@ export default function EventCard({ event, photos, onPhotoDelete, onEventDelete 
               )}
               {event.typeEvent && (
                 <p className={tw`text-sm text-gray-600 mt-1`}>
-                  {event.typeEvent}
+                  Tipo evento: {event.typeEvent}
                 </p>
               )}
             </div>
@@ -96,6 +120,29 @@ export default function EventCard({ event, photos, onPhotoDelete, onEventDelete 
               <span className={tw`bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium`}>
                 {photos.length} {photos.length === 1 ? 'foto' : 'fotos'}
               </span>
+
+              {/* <a href={event.urlQrCode || '#'} target="_blank" rel="noopener noreferrer" className={tw`font-medium text-blue-600 dark:text-blue-500 hover:underline`}>
+                🔗
+              </a> */}
+
+              <a
+                href={event.urlQrCode || '#'}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Abrir link gerado para o evento"
+                title="Abrir link do evento"
+                className={tw`
+                flex items-center gap-2
+                px-3 py-1 
+                bg-blue-100 text-blue-800 
+                rounded-full font-medium
+                hover:bg-blue-200 transition
+                shadow-sm
+              `}
+              >
+                <FiLink size={18} />
+                <span>Abrir link do evento</span>
+              </a>
 
               {/* Botão de deletar evento */}
               <button
@@ -144,11 +191,12 @@ export default function EventCard({ event, photos, onPhotoDelete, onEventDelete 
         {isExpanded && (
           <div className={tw`p-4 h-[800px] overflow-y-auto`}>
             <div className={tw`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4`}>
-              {photos.map((photo) => (
+              {photos.map((photo, index) => (
                 <PhotoCard
                   key={photo.id}
                   photo={photo}
                   onDeleteSuccess={onPhotoDelete}
+                  onClick={() => handleOpenImageModal(index)} // ✅ Adicionado!
                 />
               ))}
             </div>
@@ -156,7 +204,7 @@ export default function EventCard({ event, photos, onPhotoDelete, onEventDelete 
         )}
       </div>
 
-      {/* Modal de confirmação */}
+      {/* Modal de confirmação para deletar evento */}
       <ModalDeleteEvent
         isOpen={showDeleteConfirm}
         eventName={event.eventName || 'Evento sem nome'}
@@ -165,6 +213,17 @@ export default function EventCard({ event, photos, onPhotoDelete, onEventDelete 
         onCancel={() => setShowDeleteConfirm(false)}
         onConfirm={handleDeleteEvent}
       />
+
+      {/* ✅ Modal para exibir imagem expandida */}
+      {currentImageIndex !== null && (
+        <PhotoExpandedModal
+          photos={photos}
+          currentIndex={currentImageIndex}
+          onClose={handleCloseImageModal}
+          onPrev={handlePrevImage}
+          onNext={handleNextImage}
+        />
+      )}
     </>
   );
 }

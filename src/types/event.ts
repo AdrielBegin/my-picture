@@ -7,4 +7,5 @@ export type Event = {
   eventName?: string;
   local?: string;
   typeEvent?: string;
+  urlQrCode?: string | null;
 };
