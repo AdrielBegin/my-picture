@@ -286,7 +286,7 @@ export default function CameraCapture({ onCapture, onClose }: CameraCaptureProps
                 src={capturedImage}
                 alt="Foto capturada"
                 layout="responsive"
-                width={500} 
+                width={500}
                 height={500}
                 className={tw`max-w-full max-h-full object-contain`}
               />
@@ -299,7 +299,10 @@ export default function CameraCapture({ onCapture, onClose }: CameraCaptureProps
                 autoPlay
                 playsInline
                 muted
-                className={tw`w-full h-full object-cover ${facingMode === 'user' ? 'transform scale-x-[-1]' : ''}`}
+                className={tw`w-full h-full object-cover`}
+                style={{
+                  transform: facingMode === 'user' ? 'scaleX(-1)' : 'scaleX(-1)',
+                }}
               />
 
               {/* Flash effect */}

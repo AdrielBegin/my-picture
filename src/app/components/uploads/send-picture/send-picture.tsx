@@ -5,7 +5,6 @@ import CameraCapture from '../camera-capture/camera-capture';
 import FileUpload from '../file-upload/file-upload';
 import UploadStatus from '../upload-status/upload-status';
 import { tw } from 'twind';
-import { toast } from 'react-toastify';
 
 export default function SendPicture() {
     const [uploadStatus, setUploadStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
