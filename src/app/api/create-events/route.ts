@@ -24,9 +24,11 @@ export async function POST(req: Request) {
     });
 
     const eventId = docRef.id;
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+    const baseUrl = "https://my-picture-fouet-de-caramelo.vercel.app";
+    
     const eventUrl = `${baseUrl}/?eventId=${eventId}&eventName=${encodeURIComponent(eventName)}`;
 
+    console.log('URL do evento gerada com sucesso:', baseUrl);
     // 2. Gera o QR Code como base64
     let qrCodeBase64 = '';
     try {
