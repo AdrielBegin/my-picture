@@ -49,65 +49,58 @@ export default function CameraCapture({ onCapture, onClose }: CameraCaptureProps
       setCapturedImage(null);
 
       if (!navigator.mediaDevices?.getUserMedia) {
-        throw new Error('Seu navegador não suporta acesso à câmera');
+        throw new Error("Seu navegador não suporta acesso à câmera");
       }
 
       // Para a stream anterior se existir e aguarda um pouco
       if (stream) {
-        stream.getTracks().forEach(track => track.stop());
-        // Pequena pausa para garantir que a stream anterior seja liberada
-        await new Promise(resolve => setTimeout(resolve, 100));
+        stream.getTracks().forEach((track) => track.stop());
+        await new Promise((resolve) => setTimeout(resolve, 100));
       }
 
-      // Limpa o video antes de definir nova stream
+      // Limpa o vídeo antes de definir nova stream
       if (videoRef.current) {
         videoRef.current.srcObject = null;
-        // Aguarda o video ser limpo
-        await new Promise(resolve => setTimeout(resolve, 50));
+        await new Promise((resolve) => setTimeout(resolve, 50));
       }
 
       const constraints = {
         video: {
           facingMode,
           width: { ideal: 1280 },
-          height: { ideal: 720 }
-        }
+          height: { ideal: 720 },
+        },
       };
 
       const mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
 
       if (videoRef.current) {
-        videoRef.current.srcObject = mediaStream;
+        const video = videoRef.current;
+        video.srcObject = mediaStream;
 
-        // Aguarda o video estar pronto antes de tentar reproduzir
-        await new Promise((resolve, reject) => {
-          const video = videoRef.current!;
+        // Espera os metadados do vídeo serem carregados antes de dar play
+        await new Promise<void>((resolve, reject) => {
+          const handleLoadedMetadata = async () => {
+            video.removeEventListener("loadedmetadata", handleLoadedMetadata);
+            video.removeEventListener("error", handleError);
 
-          const handleLoadedMetadata = () => {
-            video.removeEventListener('loadedmetadata', handleLoadedMetadata);
-            video.removeEventListener('error', handleError);
-            resolve(void 0);
+            try {
+              await video.play(); // garante que o vídeo comece a rodar aqui
+              resolve();
+            } catch (err) {
+              reject(err);
+            }
           };
 
           const handleError = (e: Event) => {
-            video.removeEventListener('loadedmetadata', handleLoadedMetadata);
-            video.removeEventListener('error', handleError);
+            video.removeEventListener("loadedmetadata", handleLoadedMetadata);
+            video.removeEventListener("error", handleError);
             reject(e);
           };
 
-          video.addEventListener('loadedmetadata', handleLoadedMetadata);
-          video.addEventListener('error', handleError);
+          video.addEventListener("loadedmetadata", handleLoadedMetadata);
+          video.addEventListener("error", handleError);
         });
-
-        // Agora tenta reproduzir o vídeo
-        try {
-          await videoRef.current.play();
-        } catch (playError) {
-          console.warn('Erro ao reproduzir vídeo:', playError);
-          // Se falhar, tenta novamente após um breve delay
-          await new Promise(resolve => setTimeout(resolve, 100));
-          await videoRef.current.play();
-        }
 
         setStream(mediaStream);
       }
@@ -200,9 +193,17 @@ export default function CameraCapture({ onCapture, onClose }: CameraCaptureProps
     }, 'image/jpeg', 0.9);
   };
 
-  const retakePhoto = () => {
+  const retakePhoto = () => {    
     setCapturedImage(null);
-    setError(null);
+    // limpa o canvas também
+    if (canvasRef.current) {
+      const ctx = canvasRef.current.getContext("2d");
+      if (ctx) {
+        ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+      }
+    }
+    // reinicia a câmera
+    startCamera();
   };
 
   const switchCamera = async () => {
