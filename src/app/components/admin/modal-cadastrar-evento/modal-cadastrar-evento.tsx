@@ -5,8 +5,8 @@ import axios from 'axios';
 import QRCode from 'qrcode';
 import { toast } from 'react-toastify';
 import LogoutButton from '../logout/logout';
-import { FiPlusCircle } from 'react-icons/fi';
-// Definindo o tipo para os dados do evento
+import { FiPlusCircle, FiLoader } from 'react-icons/fi';
+
 interface EventData {
   eventName: string;
   local: string;
@@ -19,7 +19,8 @@ export default function ModalCadastroEvento() {
   const [form, setForm] = useState({ eventName: '', local: '', typeEvent: '', dataEvent: '' });
   const [qrUrl, setQrUrl] = useState('');
   const [eventData, setEventData] = useState<EventData | null>(null);
-  const [savedQrCode, setSavedQrCode] = useState(''); // QR Code salvo no banco
+  const [savedQrCode, setSavedQrCode] = useState('');
+  const [isLoading, setIsLoading] = useState(false); // Estado de loading
 
   const eventTypes = ["Casamento", "Aniversário", "Palestra", "Workshop", "Festa Corporativa", "Formatura", "Chá de Bebê", "Encontro Religioso", "Lançamento de Produto", "Show Musical"];
 
@@ -33,11 +34,16 @@ export default function ModalCadastroEvento() {
       return;
     }
 
+    // Evita múltiplos cliques
+    if (isLoading) return;
+
     try {
-      // Agora a API já gera e salva o QR Code automaticamente
+      setIsLoading(true); // Ativa o loading
+      
       const response = await axios.post('/api/create-events', form);
       const { url, qrCodeGenerated } = response.data;
 
+      toast.success('Evento cadastrado com sucesso!');
       setQrUrl(url);
       setEventData(form);
 
@@ -47,7 +53,6 @@ export default function ModalCadastroEvento() {
 
       setForm({ eventName: '', local: '', typeEvent: '', dataEvent: '' });
       setIsOpen(false);
-      toast.success('Evento cadastrado com sucesso!');
 
       setTimeout(() => {
         window.location.reload();
@@ -56,6 +61,8 @@ export default function ModalCadastroEvento() {
     } catch (error) {
       console.error('Erro ao cadastrar evento:', error);
       toast.error('Erro ao cadastrar evento. Tente novamente.');
+    } finally {
+      setIsLoading(false); // Desativa o loading
     }
   };
 
@@ -69,11 +76,15 @@ export default function ModalCadastroEvento() {
     }
   };
 
+  const handleCloseModal = () => {
+    setIsOpen(false);
+  };
+
   return (
     <div className={tw`absolute top-10 right-6 z-50`}>
       {/* Container para os botões lado a lado */}
       <div className={tw`flex items-center gap-3`}>
-        {/* Botão Cadastrar Evento à esquerda - REMOVIDO position fixed */}
+        {/* Botão Cadastrar Evento à esquerda */}
         <div>
           <button
             className={tw`
@@ -93,18 +104,18 @@ export default function ModalCadastroEvento() {
           </button>
         </div>
 
-        {/* Botão Logout à direita - REMOVIDO position fixed */}
+        {/* Botão Logout à direita */}
         <div>
           <LogoutButton />
         </div>
       </div>
 
-      {/* Modal permanece o mesmo */}
+      {/* Modal */}
       {isOpen && (
         <>
           <div
             className={tw`fixed inset-0 backdrop-blur-sm bg-black/30 z-40`}
-            onClick={() => setIsOpen(false)}
+            onClick={handleCloseModal}
           ></div>
 
           <div className={tw`fixed inset-0 flex items-center justify-center z-50 px-4`}>
@@ -112,12 +123,11 @@ export default function ModalCadastroEvento() {
               className={tw`bg-white rounded-2xl shadow-2xl p-6 w-full max-w-md`}
               onClick={(e) => e.stopPropagation()}
             >
-              {/* Resto do modal permanece igual... */}
               {/* Cabeçalho */}
               <div className={tw`flex justify-between items-center mb-6`}>
                 <h2 className={tw`text-2xl font-bold text-gray-800`}>Cadastrar Evento</h2>
                 <button
-                  onClick={() => setIsOpen(false)}
+                  onClick={handleCloseModal}
                   className={tw`text-gray-500 hover:text-gray-700 transition-colors`}
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" className={tw`h-6 w-6`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -125,7 +135,7 @@ export default function ModalCadastroEvento() {
                   </svg>
                 </button>
               </div>
-
+              
               {/* Inputs */}
               <div className={tw`space-y-4`}>
                 <div>
@@ -172,7 +182,8 @@ export default function ModalCadastroEvento() {
                     placeholder="Ex: Centro de Convenções"
                     value={form.local}
                     onChange={handleChange}
-                    className={tw`w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all`}
+                    disabled={isLoading}
+                    className={tw`w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all ${isLoading ? 'bg-gray-100 cursor-not-allowed' : ''}`}
                   />
                 </div>
 
@@ -186,7 +197,8 @@ export default function ModalCadastroEvento() {
                     name="typeEvent"
                     value={form.typeEvent}
                     onChange={handleChange}
-                    className={tw`w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all`}
+                    disabled={isLoading}
+                    className={tw`w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all ${isLoading ? 'bg-gray-100 cursor-not-allowed' : ''}`}
                   >
                     <option value="" disabled>Selecione o tipo de evento</option>
                     {eventTypes.map((type) => (
@@ -201,16 +213,25 @@ export default function ModalCadastroEvento() {
               {/* Botões */}
               <div className={tw`flex justify-end flex-wrap gap-3 mt-6`}>
                 <button
-                  className={tw`px-4 py-2 text-gray-700 rounded-lg hover:bg-gray-100 transition-colors border border-gray-300`}
-                  onClick={() => setIsOpen(false)}
+                  className={tw`px-4 py-2 text-gray-700 rounded-lg hover:bg-gray-100 transition-colors border border-gray-300 ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  onClick={handleCloseModal}
+                  disabled={isLoading}
                 >
                   Cancelar
                 </button>
                 <button
-                  className={tw`px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-md`}
+                  className={tw`px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-md flex items-center gap-2 ${isLoading ? 'opacity-75 cursor-not-allowed bg-blue-500' : ''}`}
                   onClick={handleSubmit}
+                  disabled={isLoading}
                 >
-                  Cadastrar
+                  {isLoading ? (
+                    <>
+                      <FiLoader className={tw`animate-spin w-4 h-4`} />
+                      Cadastrando...
+                    </>
+                  ) : (
+                    'Cadastrar'
+                  )}
                 </button>
               </div>
             </div>
