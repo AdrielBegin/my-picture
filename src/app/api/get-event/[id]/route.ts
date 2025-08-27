@@ -1,16 +1,17 @@
+// src/app/api/get-event/%5Bid%5D/route.ts
 import { db } from '@/lib/firebase';
 import { doc, getDoc } from 'firebase/firestore';
 import { NextResponse } from 'next/server';
 
 export async function GET(
   request: Request,
-  { params }: { params: Promise<{ eventId: string }> }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    // Aguarda a resolução dos parâmetros
-    const { eventId } = await params;
-
-    if (!eventId) {
+    
+    const { id } = await params;
+    
+    if (!id) {
       return NextResponse.json(
         { message: 'Event ID é obrigatório' }, 
         { status: 400 }
@@ -18,7 +19,7 @@ export async function GET(
     }
 
     // Busca o evento no Firestore
-    const eventRef = doc(db, 'events', eventId);
+    const eventRef = doc(db, 'events', id);
     const eventSnap = await getDoc(eventRef);
 
     if (!eventSnap.exists()) {
