@@ -17,8 +17,7 @@ export default function PhotoExpandedModal({ photos, currentIndex, onClose, onPr
     const photo = photos[currentIndex];
 
     const handleDownload = async () => {
-        try {
-            console.log("Photo object:", photo); // Para debug
+        try {           
 
             // Extrair apenas o caminho do arquivo no Firebase Storage
             let storagePath = '';
@@ -44,8 +43,6 @@ export default function PhotoExpandedModal({ photos, currentIndex, onClose, onPr
             });
 
             const apiUrl = `/api/download-image?${params.toString()}`;
-                        
-            console.log("API URL:", apiUrl);
 
             const response = await fetch(apiUrl);
 

@@ -4,11 +4,10 @@ import { NextResponse } from "next/server";
 
 export async function GET(req: Request) {
   try {
+
     const { searchParams } = new URL(req.url);
     const path = searchParams.get("path");
     const filename = searchParams.get("filename") || "image.jpg";
-
-    console.log("Download request:", { path, filename });
 
     if (!path) {
       return NextResponse.json({ error: "Path parameter is required" }, { status: 400 });
@@ -33,7 +32,7 @@ export async function GET(req: Request) {
       },
     });
   } catch (error) {
-    console.error("Download error:", error);
+
     return NextResponse.json(
       {
         error: "Failed to download image",
