@@ -1,5 +1,5 @@
+// src/lib/firebase-admin.ts
 import * as admin from 'firebase-admin';
-import { getFirestore } from 'firebase/firestore';
 
 if (!admin.apps.length) {
   admin.initializeApp({
