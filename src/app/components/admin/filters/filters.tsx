@@ -1,8 +1,7 @@
 // Filters.tsx
 import { tw } from 'twind';
-import { use, useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { Event } from '@/types/event';
-import { Timestamp } from 'firebase/firestore';
 
 type FiltersProps = {
   events: Event[];
@@ -10,36 +9,74 @@ type FiltersProps = {
 };
 
 export default function Filters({ events, onFilter }: FiltersProps) {
-  const [search, setSearch] = useState('');  
+  const [search, setSearch] = useState('');
+  const [hasResults, setHasResults] = useState(true);
+
+  // Debounce para melhorar performance
+  const debounceSearch = useCallback(
+    (searchTerm: string) => {
+      const timeoutId = setTimeout(() => {
+        performSearch(searchTerm);
+      }, 300);
+      return () => clearTimeout(timeoutId);
+    },
+    [events]
+  );
+
+  const performSearch = (searchTerm: string) => {
+    // Se o campo estiver vazio, remove o filtro
+    if (searchTerm.trim() === '') {
+      onFilter(null);
+      setHasResults(true);
+      return;
+    }
+
+    // Normaliza o texto de busca (remove acentos e converte para minúsculo)
+    const normalizedSearch = searchTerm
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .trim();
+
+    // Busca por eventos que contenham o texto
+    const matchedEvents = events.filter(event => {
+      if (!event.eventName) return false;
+      
+      const normalizedEventName = event.eventName
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '');
+      
+      return normalizedEventName.includes(normalizedSearch);
+    });
+
+    // Atualiza o estado dos resultados
+    setHasResults(matchedEvents.length > 0);
+
+    // Se encontrou eventos, filtra pelo primeiro
+    // Se não encontrou nenhum, limpa o filtro
+    if (matchedEvents.length > 0) {
+      onFilter(matchedEvents[0].eventId);
+    } else {
+      onFilter(null);
+    }
+  };
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setSearch(value);
+  };
 
-    if (value.trim() === '') {
-      onFilter(null);
-      return;
-    }
+  // Implementa o debounce quando o search muda
+  useEffect(() => {
+    const cleanup = debounceSearch(search);
+    return cleanup;
+  }, [search, debounceSearch]);
 
-    const normalizedSearch = value
-      .toLowerCase()
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '');
-
-    const matchedEvent = events.find(event => {
-      const name = event.eventName || '';
-      return name
-        .toLowerCase()
-        .normalize('NFD')
-        .replace(/[\u0300-\u036f]/g, '')
-        .includes(normalizedSearch);
-    });
-
-    if (matchedEvent) {
-      onFilter(matchedEvent?.eventId ?? null);
-    } else {
-      onFilter(null);
-    }
+  const handleClearFilter = () => {
+    setSearch('');
+    setHasResults(true);
+    onFilter(null);
   };
 
   return (
@@ -68,10 +105,7 @@ export default function Filters({ events, onFilter }: FiltersProps) {
         </div>
         
         <button
-          onClick={() => {
-            setSearch('');
-            onFilter(null);
-          }}
+          onClick={handleClearFilter}
           className={tw`px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl transition-colors font-medium flex items-center gap-2`}
         >
           <svg className={tw`w-4 h-4`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -82,8 +116,20 @@ export default function Filters({ events, onFilter }: FiltersProps) {
       </div>
       
       {search && (
-        <div className={tw`text-sm text-gray-600 bg-blue-50 px-4 py-2 rounded-lg border border-blue-200`}>
-          <span className={tw`font-medium`}>Filtro ativo:</span> &quot;{search}&quot;
+        <div className={tw`text-sm px-4 py-2 rounded-lg border ${
+          hasResults 
+            ? 'text-gray-600 bg-blue-50 border-blue-200' 
+            : 'text-red-600 bg-red-50 border-red-200'
+        }`}>
+          {hasResults ? (
+            <>
+              <span className={tw`font-medium`}>Filtro ativo:</span> &quot;{search}&quot;
+            </>
+          ) : (
+            <>
+              <span className={tw`font-medium`}>Nenhum evento encontrado para:</span> &quot;{search}&quot;
+            </>
+          )}
         </div>
       )}
     </div>
