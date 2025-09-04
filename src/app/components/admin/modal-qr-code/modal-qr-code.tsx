@@ -1,6 +1,7 @@
 // src/app/components/admin/modal-qr-code/modal-qr-code.tsx
 'use client';
 import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { tw } from 'twind';
 import { toast } from 'react-toastify';
 import { X, Download, ExternalLink, Copy } from 'lucide-react';
@@ -223,7 +224,7 @@ export default function ModalQRCode({ isOpen, eventId, eventName, eventUrl, onCl
 
     if (!isOpen) return null;
 
-    return (
+    const modalContent = (
         <>
             {/* Overlay */}
             <div
@@ -364,4 +365,6 @@ export default function ModalQRCode({ isOpen, eventId, eventName, eventUrl, onCl
             </div>
         </>
     );
+
+    return createPortal(modalContent, document.body);
 }

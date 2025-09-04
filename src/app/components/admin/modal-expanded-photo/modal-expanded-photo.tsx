@@ -1,5 +1,6 @@
 import { tw } from 'twind';
 import { useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { Photo } from '@/types/photo';
 import Image from 'next/image';
 import { X, ChevronLeft, ChevronRight, Download } from "lucide-react";
@@ -84,9 +85,17 @@ export default function PhotoExpandedModal({ photos, currentIndex, onClose, onPr
 
     if (!photo) return null;
 
-    return (
+    const modalContent = (
         <div
-            className={tw`fullscreen-overlay inset-0 bg-black bg-opacity-80 flex flex-col items-center justify-center z-[9999]`}
+            className="fullscreen-overlay"
+            style={{
+                backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                zIndex: 9999
+            }}
         >
             {/* Botão Fechar */}
             <button
@@ -130,4 +139,6 @@ export default function PhotoExpandedModal({ photos, currentIndex, onClose, onPr
             </button>
         </div>
     );
+
+    return createPortal(modalContent, document.body);
 }

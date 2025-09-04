@@ -1,9 +1,10 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { toast, ToastContainer } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { tw } from 'twind';
+import { Camera, Lock, Mail, Image, User } from 'lucide-react';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -36,57 +37,111 @@ export default function LoginPage() {
     }
   };
 
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+    return () => setMounted(false);
+  }, []);
+
   return (
-    <div className={tw`flex flex-col lg:flex-row h-screen`}>
-      <div className={tw`hidden lg:flex w-1/2 bg-gradient-to-br from-indigo-600 to-blue-800 items-center justify-center p-12`}>
-        <div className={tw`max-w-md text-white`}>
-          <h1 className={tw`text-4xl font-bold mb-6`}>Sejam Bem-vindo</h1>
-          <p className={tw`text-xl  mb-8`}>
-            Acesse sua conta para gerenciar suas fotos.
+    <div className={tw`flex flex-col lg:flex-row h-screen bg-gradient-to-b from-blue-50 to-indigo-100 login-container`}>
+      {/* Lado esquerdo - Banner */}
+      <div className={tw`hidden lg:flex w-1/2 bg-gradient-to-br from-blue-600 to-purple-700 items-center justify-center p-12 relative overflow-hidden`}>
+        <div className={tw`absolute inset-0 bg-black opacity-10 z-0`}></div>
+        <div className={tw`absolute -bottom-20 -left-20 w-64 h-64 bg-white opacity-10 rounded-full`}></div>
+        <div className={tw`absolute -top-20 -right-20 w-80 h-80 bg-white opacity-10 rounded-full`}></div>
+        
+        <div className={tw`max-w-md text-white z-10 ${mounted ? 'animate-fade-in-up' : 'opacity-0'}`}>
+          <div className={tw`flex items-center mb-8`}>
+            <Camera size={40} className={tw`mr-3`} />
+            <h1 className={tw`text-3xl font-bold`}>Picture Events</h1>
+          </div>
+          <h2 className={tw`text-4xl font-bold mb-6 leading-tight`}>Seja Bem-vindo ao Gerenciador de Eventos</h2>
+          <p className={tw`text-xl mb-8 text-blue-100`}>
+            Acesse sua conta para gerenciar suas fotos e eventos de forma simples e eficiente.
           </p>
+          <div className={tw`flex space-x-2`}>
+            <div className={tw`w-3 h-3 rounded-full bg-white opacity-70`}></div>
+            <div className={tw`w-3 h-3 rounded-full bg-white`}></div>
+            <div className={tw`w-3 h-3 rounded-full bg-white opacity-70`}></div>
+          </div>
         </div>
       </div>
 
+      {/* Mobile Banner - Visível apenas em dispositivos móveis */}
+      <div className={tw`lg:hidden w-full flex flex-col items-center justify-center py-4 px-4 bg-gradient-to-r from-blue-500 to-indigo-600 relative overflow-hidden mobile-banner-compact ${mounted ? 'animate-fade-in' : 'opacity-0'}`}>
+        <div className={tw`absolute inset-0 bg-pattern opacity-10 z-0`}></div>
+        <div className={tw`absolute -bottom-8 -left-8 w-24 h-24 bg-white opacity-10 rounded-full`}></div>
+        <div className={tw`absolute -top-8 -right-8 w-32 h-32 bg-white opacity-10 rounded-full`}></div>
+        
+        <div className={tw`flex items-center mb-2 z-10`}>
+          <Camera size={28} className={tw`mr-2 text-white`} />
+          <h1 className={tw`text-xl font-bold text-white`}>Picture Events</h1>
+        </div>
+        <p className={tw`text-center text-white text-xs leading-tight z-10`}>
+          Gerencie suas fotos e eventos de forma simples
+        </p>
+      </div>
+      
       {/* Lado direito - Formulário de login */}
-      <div className={tw`w-full lg:w-1/2 flex items-center justify-center p-8 h-screen`}>
-        <div className={tw`max-w-md w-full space-y-8 bg-white p-10 rounded-xl shadow-lg`}>
-          <ToastContainer />
+      <div className={tw`w-full lg:w-1/2 flex items-center justify-center p-3 sm:p-8 h-auto lg:h-screen form-container-compact`}>
+        <div className={tw`max-w-sm w-full space-y-4 bg-white/90 backdrop-blur-sm p-4 sm:p-10 rounded-2xl shadow-xl form-card-compact ${mounted ? 'animate-fade-in' : 'opacity-0'}`}>
           <div className={tw`text-center`}>
-            <h2 className={tw`mt-6 text-3xl font-extrabold text-gray-900`}>Acesse sua conta</h2>
+            <div className={tw`inline-flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 text-white mb-3 shadow-md`}>
+              <User size={20} />
+            </div>
+            <h2 className={tw`text-xl sm:text-3xl font-bold text-gray-900 mb-1`}>Acesse sua conta</h2>
+            <p className={tw`text-sm text-gray-600`}>Entre com suas credenciais para continuar</p>
           </div>
-          <form className={tw`mt-8 space-y-6`} onSubmit={handleLogin}>
-            <div className={tw`rounded-md shadow-sm space-y-4`}>
+          
+          <form className={tw`mt-4 space-y-4`} onSubmit={handleLogin}>
+            <div className={tw`space-y-3`}>
               <div>
-                <label htmlFor="email" className={tw`block text-sm font-medium text-gray-700`}>
+                <label htmlFor="email" className={tw`block text-sm font-medium text-gray-700 mb-1`}>
                   Email
                 </label>
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  autoComplete="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className={tw`mt-1 appearance-none block w-full px-3 py-3 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm`}
-                  placeholder="seu@email.com"
-                />
+                <div className={tw`relative`}>
+                  <div className={tw`absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-blue-500`}>
+                    <Mail size={18} />
+                  </div>
+                  <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    autoComplete="email"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className={tw`pl-10 appearance-none block w-full px-3 py-3 border border-gray-300 bg-white/80 rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 text-sm input-compact`}
+                    placeholder="seu@email.com"
+                  />
+                </div>
               </div>
+              
               <div>
-                <label htmlFor="password" className={tw`block text-sm font-medium text-gray-700`}>
-                  Senha
-                </label>
-                <input
-                  id="password"
-                  name="password"
-                  type="password"
-                  autoComplete="current-password"
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className={tw`mt-1 appearance-none block w-full px-3 py-3 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm`}
-                  placeholder="••••••••"
-                />
+                <div className={tw`flex items-center justify-between mb-1`}>
+                  <label htmlFor="password" className={tw`block text-sm font-medium text-gray-700`}>
+                    Senha
+                  </label>
+                  <a href="#" className={tw`text-sm text-blue-600 hover:text-blue-800 transition-colors`}>Esqueceu a senha?</a>
+                </div>
+                <div className={tw`relative`}>
+                  <div className={tw`absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-blue-500`}>
+                    <Lock size={18} />
+                  </div>
+                  <input
+                    id="password"
+                    name="password"
+                    type="password"
+                    autoComplete="current-password"
+                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className={tw`pl-10 appearance-none block w-full px-3 py-3 border border-gray-300 bg-white/80 rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 text-sm input-compact`}
+                    placeholder="••••••••"
+                  />
+                </div>
               </div>
             </div>
 
@@ -94,7 +149,7 @@ export default function LoginPage() {
               <button
                 type="submit"
                 disabled={isLoading}
-                className={tw`group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ${isLoading ? 'opacity-75 cursor-not-allowed' : ''}`}
+                className={tw`group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-xl text-white bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 shadow-md hover:shadow-lg button-compact ${isLoading ? 'opacity-75 cursor-not-allowed' : ''}`}
               >
                 {isLoading ? (
                   <>
@@ -110,6 +165,10 @@ export default function LoginPage() {
               </button>
             </div>
           </form>
+          
+          <div className={tw`text-center text-xs text-gray-600 mt-4`}>
+            <p>© {new Date().getFullYear()} Picture Events. Todos os direitos reservados.</p>
+          </div>
         </div>
       </div>
     </div>

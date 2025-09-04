@@ -1,11 +1,10 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { tw } from 'twind';
 import axios from 'axios';
 import QRCode from 'qrcode';
 import { toast } from 'react-toastify';
-import LogoutButton from '../logout/logout';
-import { FiPlusCircle, FiLoader } from 'react-icons/fi';
+import { FiLoader } from 'react-icons/fi';
 
 interface EventData {
   eventName: string;
@@ -14,13 +13,25 @@ interface EventData {
   dataEvent: string;
 }
 
-export default function ModalCadastroEvento() {
+export default function ModalCadastroEvento() { 
   const [isOpen, setIsOpen] = useState(false);
   const [form, setForm] = useState({ eventName: '', local: '', typeEvent: '', dataEvent: '' });
   const [qrUrl, setQrUrl] = useState('');
   const [eventData, setEventData] = useState<EventData | null>(null);
   const [savedQrCode, setSavedQrCode] = useState('');
   const [isLoading, setIsLoading] = useState(false); // Estado de loading
+
+  // Listener para abrir o modal via evento customizado
+  useEffect(() => {
+    const handleOpenModal = () => setIsOpen(true);
+    
+    // Adiciona listener global para o evento customizado
+    window.addEventListener('openCadastroModal', handleOpenModal);
+    
+    return () => {
+      window.removeEventListener('openCadastroModal', handleOpenModal);
+    };
+  }, []);
 
   const eventTypes = ["Casamento", "Aniversário", "Palestra", "Workshop", "Festa Corporativa", "Formatura", "Chá de Bebê", "Encontro Religioso", "Lançamento de Produto", "Show Musical"];
 
@@ -80,45 +91,16 @@ export default function ModalCadastroEvento() {
     setIsOpen(false);
   };
 
+  if (!isOpen) return null;
+
   return (
-    <div className={tw`absolute top-10 right-6 z-50`}>
-      {/* Container para os botões lado a lado */}
-      <div className={tw`flex items-center gap-3`}>
-        {/* Botão Cadastrar Evento à esquerda */}
-        <div>
-          <button
-            className={tw`
-            bg-blue-600 text-white 
-            px-3 py-1.5 md:px-4 md:py-2 
-            rounded-lg hover:bg-blue-700 active:bg-blue-800 
-            shadow-md hover:shadow-lg active:shadow-inner 
-            transition duration-300 ease-in-out 
-            flex items-center gap-1.5 md:gap-2 
-            font-semibold text-sm md:text-sm 
-            select-none focus:outline-none focus:ring-4 focus:ring-blue-300
-          `}
-            onClick={() => setIsOpen(true)}
-          >
-            <FiPlusCircle className="w-6 h-6" />
-            <span className={tw`hidden sm:inline`}>Cadastrar Evento</span>
-          </button>
-        </div>
+    <>
+      <div
+        className={tw`fixed inset-0 backdrop-blur-sm bg-black/30 z-40`}
+        onClick={handleCloseModal}
+      ></div>
 
-        {/* Botão Logout à direita */}
-        <div>
-          <LogoutButton />
-        </div>
-      </div>
-
-      {/* Modal */}
-      {isOpen && (
-        <>
-          <div
-            className={tw`fixed inset-0 backdrop-blur-sm bg-black/30 z-40`}
-            onClick={handleCloseModal}
-          ></div>
-
-          <div className={tw`fixed inset-0 flex items-center justify-center z-50 px-4`}>
+      <div className={tw`fixed inset-0 flex items-center justify-center z-50 px-4`}>
             <div
               className={tw`bg-white rounded-2xl shadow-2xl p-6 w-full max-w-md`}
               onClick={(e) => e.stopPropagation()}
@@ -236,8 +218,6 @@ export default function ModalCadastroEvento() {
               </div>
             </div>
           </div>
-        </>
-      )}
-    </div>
+    </>
   );
 }
