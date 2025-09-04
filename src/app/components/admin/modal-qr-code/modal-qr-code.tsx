@@ -35,6 +35,8 @@ export default function ModalQRCode({ isOpen, eventId, eventName, eventUrl, onCl
     const [eventData, setEventData] = useState<EventData | null>(null);
     const [qrCodeImage, setQrCodeImage] = useState<string>('');
     const [error, setError] = useState<string>('');
+    const [downloadProgress, setDownloadProgress] = useState(0);
+    const [isDownloading, setIsDownloading] = useState(false);
 
     const fetchEventData = async () => {
         if (!eventId) return;
@@ -128,72 +130,138 @@ export default function ModalQRCode({ isOpen, eventId, eventName, eventUrl, onCl
         }
     };
 
-    // Baixa o QR Code como PDF
-    const handleDownloadPDF = () => {
-
+    // Baixa o QR Code como PDF com indicador de progresso
+    const handleDownloadPDF = async () => {
         if (!qrCodeImage || !eventData) {
             toast.error('QR Code não disponível para download');
             return;
         }
 
+        if (isDownloading) {
+            return; // Evita múltiplos downloads simultâneos
+        }
+
+        setIsDownloading(true);
+        setDownloadProgress(0);
+
         try {
+            // Simula progresso durante a geração
+            const updateProgress = (progress: number) => {
+                setDownloadProgress(progress);
+            };
+
+            updateProgress(10);
+            await new Promise(resolve => setTimeout(resolve, 100));
+
             const pdf = new jsPDF();
             const pageWidth = pdf.internal.pageSize.getWidth();
             const pageHeight = pdf.internal.pageSize.getHeight();
 
-            // Título
-            pdf.setFontSize(22);
+            updateProgress(25);
+            await new Promise(resolve => setTimeout(resolve, 100));
+
+            // Adiciona gradiente de fundo
+            pdf.setFillColor(240, 248, 255); // Alice Blue
+            pdf.rect(0, 0, pageWidth, pageHeight, 'F');
+
+            // Adiciona borda decorativa
+            pdf.setDrawColor(59, 130, 246); // Blue-500
+            pdf.setLineWidth(2);
+            pdf.rect(10, 10, pageWidth - 20, pageHeight - 20);
+
+            updateProgress(40);
+            await new Promise(resolve => setTimeout(resolve, 100));
+
+            // Título com estilo melhorado
+            pdf.setFontSize(24);
             pdf.setFont('helvetica', 'bold');
+            pdf.setTextColor(30, 58, 138); // Blue-900
             const title = 'QR Code do Evento';
             const titleWidth = pdf.getTextWidth(title);
             const titleX = (pageWidth - titleWidth) / 2;
-            pdf.text(title, titleX, 40);
+            pdf.text(title, titleX, 35);
 
-            // Informações do evento
+            // Linha decorativa sob o título
+            pdf.setDrawColor(59, 130, 246);
+            pdf.setLineWidth(1);
+            pdf.line(titleX, 40, titleX + titleWidth, 40);
+
+            updateProgress(55);
+            await new Promise(resolve => setTimeout(resolve, 100));
+
+            // Informações do evento com melhor formatação
             pdf.setFont('helvetica', 'normal');
-            pdf.setFontSize(14);
+            pdf.setFontSize(12);
+            pdf.setTextColor(55, 65, 81); // Gray-700
 
             const eventInfo = [
-                `Nome do Evento: ${eventName}`,
-                eventData.local ? `Local: ${eventData.local}` : '',
-                eventData.typeEvent ? `Tipo: ${eventData.typeEvent}` : '',
-                eventData.dataEvent ? `Data: ${new Date(eventData.dataEvent.toDate()).toLocaleDateString('pt-BR')}` : ''
+                `📅 Nome do Evento: ${eventName}`,
+                eventData.local ? `📍 Local: ${eventData.local}` : '',
+                eventData.typeEvent ? `🎯 Tipo: ${eventData.typeEvent}` : '',
+                eventData.dataEvent ? `📆 Data: ${new Date(eventData.dataEvent.toDate()).toLocaleDateString('pt-BR')}` : ''
             ].filter(Boolean);
 
-            let currentY = 70;
+            let currentY = 60;
             eventInfo.forEach((info) => {
                 const infoWidth = pdf.getTextWidth(info);
                 const infoX = (pageWidth - infoWidth) / 2;
                 pdf.text(info, infoX, currentY);
-                currentY += 20;
+                currentY += 15;
             });
 
-            // QR Code
-            const qrSize = 100;
+            updateProgress(70);
+            await new Promise(resolve => setTimeout(resolve, 100));
+
+            // QR Code com moldura
+            const qrSize = 120;
             const qrX = (pageWidth - qrSize) / 2;
-            const qrY = currentY + 20;
+            const qrY = currentY + 15;
+            
+            // Moldura do QR Code
+            pdf.setFillColor(255, 255, 255);
+            pdf.setDrawColor(59, 130, 246);
+            pdf.setLineWidth(3);
+            pdf.rect(qrX - 5, qrY - 5, qrSize + 10, qrSize + 10, 'FD');
+            
             pdf.addImage(qrCodeImage, 'PNG', qrX, qrY, qrSize, qrSize);
 
-            // URL
-            pdf.setFontSize(10);
-            pdf.setFont('helvetica', 'italic');
-            const urlY = qrY + qrSize + 30;
-            const urlToShow = eventData.urlQrCode || eventUrl;
-            const urlLines = pdf.splitTextToSize(urlToShow, pageWidth - 40);
+            updateProgress(85);
+            await new Promise(resolve => setTimeout(resolve, 100));
 
+            // URL com melhor formatação
+            pdf.setFontSize(9);
+            pdf.setFont('helvetica', 'italic');
+            pdf.setTextColor(107, 114, 128); // Gray-500
+            const urlY = qrY + qrSize + 25;
+            const urlToShow = eventData.urlQrCode || eventUrl;
+            
+            // Caixa para a URL
+            pdf.setFillColor(249, 250, 251); // Gray-50
+            pdf.setDrawColor(209, 213, 219); // Gray-300
+            pdf.setLineWidth(0.5);
+            pdf.rect(20, urlY - 8, pageWidth - 40, 20, 'FD');
+            
+            const urlLines = pdf.splitTextToSize(urlToShow, pageWidth - 50);
             urlLines.forEach((line: string, index: number) => {
                 const lineWidth = pdf.getTextWidth(line);
                 const lineX = (pageWidth - lineWidth) / 2;
-                pdf.text(line, lineX, urlY + (index * 12));
+                pdf.text(line, lineX, urlY + (index * 10));
             });
 
-            // Rodapé
+            updateProgress(95);
+            await new Promise(resolve => setTimeout(resolve, 100));
+
+            // Rodapé estilizado
             pdf.setFontSize(8);
             pdf.setFont('helvetica', 'normal');
-            const footerText = `Gerado em ${new Date().toLocaleDateString('pt-BR')} às ${new Date().toLocaleTimeString('pt-BR')}`;
+            pdf.setTextColor(156, 163, 175); // Gray-400
+            const footerText = `✨ Gerado em ${new Date().toLocaleDateString('pt-BR')} às ${new Date().toLocaleTimeString('pt-BR')}`;
             const footerWidth = pdf.getTextWidth(footerText);
             const footerX = (pageWidth - footerWidth) / 2;
-            pdf.text(footerText, footerX, pageHeight - 20);
+            pdf.text(footerText, footerX, pageHeight - 25);
+
+            updateProgress(100);
+            await new Promise(resolve => setTimeout(resolve, 200));
 
             const eventNameSafe = eventName ? eventName.replace(/\s+/g, '_') : 'Evento_Desconhecido';
             const fileName = `QRCode_${eventNameSafe}_${new Date().getTime()}.pdf`;
@@ -202,7 +270,10 @@ export default function ModalQRCode({ isOpen, eventId, eventName, eventUrl, onCl
             toast.success('PDF baixado com sucesso!');
         } catch (error) {
             console.error('Erro ao gerar PDF:', error);
-            toast.error('Erro ao gerar PDF');
+            toast.error('Erro ao gerar PDF. Tente novamente.');
+        } finally {
+            setIsDownloading(false);
+            setDownloadProgress(0);
         }
     };
 
@@ -334,20 +405,33 @@ export default function ModalQRCode({ isOpen, eventId, eventName, eventUrl, onCl
 
                                     <button
                                         onClick={handleDownloadPDF}
-                                        className={tw`flex items-center gap-2 px-4 py-2 bg-green-100 text-green-700 rounded-lg hover:bg-green-200 transition-colors`}
+                                        disabled={isDownloading}
+                                        className={tw`relative flex items-center gap-2 px-4 py-2 ${
+                                            isDownloading 
+                                                ? 'bg-blue-100 text-blue-700 cursor-not-allowed' 
+                                                : 'bg-green-100 text-green-700 hover:bg-green-200'
+                                        } rounded-lg transition-all duration-300 overflow-hidden`}
                                     >
-                                        <Download size={16} />
-                                        <span>Baixar PDF</span>
+                                        {isDownloading && (
+                                            <div 
+                                                className={tw`absolute inset-0 bg-gradient-to-r from-blue-200 to-blue-300 transition-all duration-300`}
+                                                style={{ width: `${downloadProgress}%` }}
+                                            />
+                                        )}
+                                        <div className={tw`relative z-10 flex items-center gap-2`}>
+                                            {isDownloading ? (
+                                                <div className={tw`animate-spin rounded-full h-4 w-4 border-2 border-blue-600 border-t-transparent`} />
+                                            ) : (
+                                                <Download size={16} />
+                                            )}
+                                            <span>
+                                                {isDownloading 
+                                                    ? `Gerando PDF... ${downloadProgress}%` 
+                                                    : 'Baixar PDF'
+                                                }
+                                            </span>
+                                        </div>
                                     </button>
-
-                                    {/* <button
-                                        onClick={handleRegenerateQRCode}
-                                        disabled={loading}
-                                        className={tw`flex items-center gap-2 px-4 py-2 bg-orange-100 text-orange-700 rounded-lg hover:bg-orange-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed`}
-                                    >
-                                        <RefreshCw size={16} className={loading ? tw`animate-spin` : ''} />
-                                        <span>Regenerar</span>
-                                    </button> */}
                                 </div>
 
                                 {/* QR Code Info */}
