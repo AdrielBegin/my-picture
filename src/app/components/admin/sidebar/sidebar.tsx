@@ -161,12 +161,7 @@ export default function Sidebar({ className, collapsed, onToggleCollapse, isMobi
             >
               <span className={tw`text-lg mr-3 ${collapsed ? 'mx-auto' : ''}`}>{item.icon}</span>
               {!collapsed && (
-                <span className={tw`font-medium flex items-center`}>
-                  {item.label}
-                  {isNavigating && pathname !== item.path && (
-                    <div className={tw`ml-2 w-3 h-3 border border-purple-500 border-t-transparent rounded-full animate-spin`}></div>
-                  )}
-                </span>
+                <span className={tw`font-medium`}>{item.label}</span>
               )}
             </Link>
           ))}
