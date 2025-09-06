@@ -83,14 +83,12 @@ export default function Sidebar({ className, collapsed, onToggleCollapse, isMobi
           </div>
           {!collapsed && (
             <div>
-              <h1 className={tw`text-xl font-bold text-gray-800`}>EventSnap</h1>
+              <h1 className={tw`text-xl font-bold text-gray-800`}>My pictures App</h1>
               <p className={tw`text-sm text-gray-500`}>Fotos de Eventos via QR</p>
             </div>
           )}
         </div>
       </div>
-
-
 
       {/* Menu Principal */}
       <div className={tw`flex-1 py-6`}>

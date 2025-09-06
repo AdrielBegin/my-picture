@@ -55,7 +55,7 @@ export default function LoginPage() {
         <div className={tw`max-w-md text-white z-10 ${mounted ? 'animate-fade-in-up' : 'opacity-0'}`}>
           <div className={tw`flex items-center mb-8`}>
             <Camera size={40} className={tw`mr-3`} />
-            <h1 className={tw`text-3xl font-bold`}>Picture Events</h1>
+            <h1 className={tw`text-3xl font-bold`}>My pictures App</h1>
           </div>
           <h2 className={tw`text-4xl font-bold mb-6 leading-tight`}>Seja Bem-vindo ao Gerenciador de Eventos</h2>
           <p className={tw`text-xl mb-8 text-blue-100`}>
@@ -166,7 +166,7 @@ export default function LoginPage() {
           </form>
           
           <div className={tw`text-center text-xs text-gray-600 mt-4`}>
-            <p>© {new Date().getFullYear()} Picture Events. Todos os direitos reservados.</p>
+            <p>© {new Date().getFullYear()} My pictures App. Todos os direitos reservados.</p>
           </div>
         </div>
       </div>
