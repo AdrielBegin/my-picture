@@ -1,6 +1,7 @@
 'use client';
-import React from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
+import Link from 'next/link';
 import { tw } from 'twind';
 
 interface SidebarProps {
@@ -39,9 +40,46 @@ export default function Sidebar({ className, collapsed, onToggleCollapse, isMobi
     }
   ];
 
-  const handleNavigation = (path: string) => {
-    router.push(path);
-  };
+  const [isNavigating, setIsNavigating] = useState(false);
+  const [navigationTimeout, setNavigationTimeout] = useState<NodeJS.Timeout | null>(null);
+
+  // Debounced navigation to prevent multiple rapid clicks
+  const handleNavigation = useCallback((path: string) => {
+    if (isNavigating || pathname === path) return;
+    
+    // Clear any existing timeout
+    if (navigationTimeout) {
+      clearTimeout(navigationTimeout);
+    }
+    
+    setIsNavigating(true);
+    
+    // Add a small delay to prevent rapid navigation
+    const timeout = setTimeout(() => {
+      router.push(path);
+      setNavigationTimeout(null);
+    }, 150);
+    
+    setNavigationTimeout(timeout);
+  }, [router, pathname, isNavigating, navigationTimeout]);
+
+  // Reset navigation state when pathname changes
+  useEffect(() => {
+    setIsNavigating(false);
+    if (navigationTimeout) {
+      clearTimeout(navigationTimeout);
+      setNavigationTimeout(null);
+    }
+  }, [pathname]);
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (navigationTimeout) {
+        clearTimeout(navigationTimeout);
+      }
+    };
+  }, [navigationTimeout]);
 
   const handleLogout = async () => {
     try {
@@ -102,25 +140,35 @@ export default function Sidebar({ className, collapsed, onToggleCollapse, isMobi
         
         <nav className={tw`space-y-1 px-3`}>
           {menuItems.map((item) => (
-            <button
+            <Link
               key={item.id}
-              onClick={() => {
-                handleNavigation(item.path);
-                onMobileClose?.();
-              }}
+              href={item.path}
+              prefetch={true}
               className={tw`
                 w-full flex items-center px-3 py-3 text-left rounded-lg transition-all duration-200
                 ${item.active 
                   ? 'bg-purple-50 text-purple-700 border-r-2 border-purple-500' 
                   : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                 }
+                ${isNavigating ? 'opacity-70 pointer-events-none' : ''}
+                block no-underline
               `}
+              onClick={(e) => {
+                e.preventDefault();
+                handleNavigation(item.path);
+                onMobileClose?.();
+              }}
             >
               <span className={tw`text-lg mr-3 ${collapsed ? 'mx-auto' : ''}`}>{item.icon}</span>
               {!collapsed && (
-                <span className={tw`font-medium`}>{item.label}</span>
+                <span className={tw`font-medium flex items-center`}>
+                  {item.label}
+                  {isNavigating && pathname !== item.path && (
+                    <div className={tw`ml-2 w-3 h-3 border border-purple-500 border-t-transparent rounded-full animate-spin`}></div>
+                  )}
+                </span>
               )}
-            </button>
+            </Link>
           ))}
         </nav>
       </div>
