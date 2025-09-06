@@ -15,8 +15,15 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "My pictures",
-  description: "",
+  title: "My Pictures - Compartilhe seus momentos especiais",
+  description: "Plataforma para compartilhar e gerenciar fotos de eventos especiais. Capture e organize seus momentos mais importantes.",
+  icons: {
+    icon: '/favicon.ico',
+    shortcut: '/favicon.ico',
+    apple: '/favicon.ico',
+  },
+  viewport: 'width=device-width, initial-scale=1',
+  themeColor: '#000000',
 };
 
 export default function RootLayout({
