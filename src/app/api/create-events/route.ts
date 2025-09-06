@@ -8,7 +8,7 @@ import QRCode from 'qrcode';
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { eventName, local, typeEvent } = body;
+    const { eventName, local, typeEvent, status } = body;
 
     if (!eventName || !local || !typeEvent) {
       return NextResponse.json({ message: 'Todos os campos são obrigatórios' }, { status: 400 });
@@ -19,8 +19,9 @@ export async function POST(req: Request) {
       eventName,
       local,
       typeEvent,
+      status: status || 'ativo', // Define 'ativo' como padrão se não fornecido
       createdAt: new Date(),
-      dataEvent: body.dataEvent ? new Date(body.dataEvent + 'T12:00:00') : null,
+      dataEvent: body.dataEvent ? new Date(body.dataEvent + 'T12:00:00') : null      
     });
 
     const eventId = docRef.id;
@@ -53,8 +54,8 @@ export async function POST(req: Request) {
 
     // Só adiciona o QR Code se foi gerado com sucesso
     if (qrCodeBase64) {
-      updateData.qrCodeImage = qrCodeBase64; // aqui vai dar erro se não existir no Event
-      updateData.qrCodeGeneratedAt = new Date(); // idem
+      updateData.qrCodeImage = qrCodeBase64; 
+      updateData.qrCodeGeneratedAt = new Date(); 
     }
 
     await updateDoc(doc(db, 'events', eventId), updateData);

@@ -1,15 +1,17 @@
 'use client';
+import { tw } from 'twind';
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import CameraCapture from '../camera-capture/camera-capture';
 import FileUpload from '../file-upload/file-upload';
 import UploadStatus from '../upload-status/upload-status';
-import { tw } from 'twind';
 import ModalEventoNaoEncontrado from '../modal-evento-nao-encontrado/modal-evento-nao-encontrado';
 import ModalAnimacaoVerificarEvento from '../modal-animacao-verificar-evento/modal-animacao-verificar-evento';
 import Image from "next/image";
 
 export default function SendPicture() {
+
+    
     const [uploadStatus, setUploadStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
     const [eventStatus, setEventStatus] = useState<'loading' | 'valid' | 'invalid'>('loading');
     const searchParams = useSearchParams();
@@ -29,7 +31,6 @@ export default function SendPicture() {
         const validateEvent = async () => {
             if (!eventId) {
                 setEventStatus('invalid');
-                console.error('Evento ID não encontrado');
                 return;
             }
 
@@ -42,7 +43,6 @@ export default function SendPicture() {
                     setEventStatus('invalid');
                 }
             } catch (error) {
-                console.error('Erro ao validar evento:', error);
                 setEventStatus('invalid');
             }
         };
@@ -50,7 +50,6 @@ export default function SendPicture() {
         validateEvent();
     }, [eventId]);
 
-    // Validação em tempo real do nome
     useEffect(() => {
         if (userName.length === 0) {
             setNameValidation({ isValid: false, message: '', type: 'idle' });
@@ -103,7 +102,6 @@ export default function SendPicture() {
     const handleFileSelect = (file: File) => {
         setSelectedFile(file);
 
-        // Criar preview da imagem
         const reader = new FileReader();
         reader.onload = (e) => {
             setPreviewImage(e.target?.result as string);
@@ -163,6 +161,9 @@ export default function SendPicture() {
     const handleStartCamera = () => {
         setShowCamera(true);
     };
+
+
+
     if (eventStatus === 'loading') {
         return (
             <ModalAnimacaoVerificarEvento />
@@ -212,9 +213,9 @@ export default function SendPicture() {
                                     value={userName}
                                     onChange={(e) => setUserName(e.target.value)}
                                     className={tw`w-full px-3 sm:px-4 py-2 sm:py-3 pr-10 sm:pr-12 border-2 rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 transition-all duration-300 bg-gray-50 focus:bg-white text-sm sm:text-base transform hover:scale-[1.01] ${nameValidation.type === 'success' ? 'border-green-400 focus:border-green-500 focus:ring-green-300' :
-                                            nameValidation.type === 'error' ? 'border-red-400 focus:border-red-500 focus:ring-red-300' :
-                                                nameValidation.type === 'warning' ? 'border-yellow-400 focus:border-yellow-500 focus:ring-yellow-300' :
-                                                    'border-gray-200 focus:border-indigo-500 focus:ring-indigo-300'
+                                        nameValidation.type === 'error' ? 'border-red-400 focus:border-red-500 focus:ring-red-300' :
+                                            nameValidation.type === 'warning' ? 'border-yellow-400 focus:border-yellow-500 focus:ring-yellow-300' :
+                                                'border-gray-200 focus:border-indigo-500 focus:ring-indigo-300'
                                         }`}
                                 />
                                 <div className={tw`absolute right-2 sm:right-3 top-1/2 transform -translate-y-1/2 transition-all duration-300`}>
@@ -243,9 +244,9 @@ export default function SendPicture() {
 
                             {nameValidation.message && (
                                 <div className={tw`flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-all duration-300 transform ${nameValidation.type === 'success' ? 'bg-green-100 text-green-700 border border-green-200' :
-                                        nameValidation.type === 'error' ? 'bg-red-100 text-red-700 border border-red-200' :
-                                            nameValidation.type === 'warning' ? 'bg-yellow-100 text-yellow-700 border border-yellow-200' :
-                                                'bg-gray-100 text-gray-700 border border-gray-200'
+                                    nameValidation.type === 'error' ? 'bg-red-100 text-red-700 border border-red-200' :
+                                        nameValidation.type === 'warning' ? 'bg-yellow-100 text-yellow-700 border border-yellow-200' :
+                                            'bg-gray-100 text-gray-700 border border-gray-200'
                                     }`}>
                                     <span className={tw`font-medium`}>{nameValidation.message}</span>
                                 </div>
@@ -259,10 +260,10 @@ export default function SendPicture() {
 
                     <div className={tw`space-y-3 sm:space-y-4 transform transition-all duration-500`}>
                         <button
-                            onClick={handleStartCamera}
-                            className={tw`w-full py-3 sm:py-4 px-4 sm:px-6 rounded-xl text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 focus:outline-none focus:ring-4 focus:ring-indigo-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 sm:gap-3 font-semibold text-base sm:text-lg shadow-lg transform transition-all duration-300 hover:scale-105 active:scale-95`}
+                            onClick={() => setShowCamera(true)}
+                            className={tw`w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-3 px-6 rounded-xl font-semibold text-lg shadow-lg hover:shadow-xl transform transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-3`}
                         >
-                            <svg xmlns="http://www.w3.org/2000/svg" className={tw`h-5 w-5 sm:h-6 sm:w-6`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <svg className={tw`w-6 h-6`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
                             </svg>
@@ -278,12 +279,10 @@ export default function SendPicture() {
                         <FileUpload onUpload={handleFileSelect} />
 
                         {showCamera && (
-                            <div className={tw`transform transition-all duration-500 animate-fade-in`}>
-                                <CameraCapture
-                                    onCapture={handleUpload}
-                                    onClose={() => setShowCamera(false)}
-                                />
-                            </div>
+                            <CameraCapture
+                                onCapture={handleUpload}
+                                onClose={() => setShowCamera(false)}
+                            />
                         )}
 
                         {/* Preview da imagem */}

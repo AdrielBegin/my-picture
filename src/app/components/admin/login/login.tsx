@@ -123,8 +123,7 @@ export default function LoginPage() {
                 <div className={tw`flex items-center justify-between mb-1`}>
                   <label htmlFor="password" className={tw`block text-sm font-medium text-gray-700`}>
                     Senha
-                  </label>
-                  <a href="#" className={tw`text-sm text-blue-600 hover:text-blue-800 transition-colors`}>Esqueceu a senha?</a>
+                  </label>                  
                 </div>
                 <div className={tw`relative`}>
                   <div className={tw`absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-blue-500`}>

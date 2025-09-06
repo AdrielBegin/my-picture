@@ -58,7 +58,7 @@ export default function EventCard({ event, photos, onPhotoDelete, onEventDelete 
       prev !== null ? (prev + 1) % photos.length : prev
     );
   };
-  
+
   const handleShowQRCode = (e: React.MouseEvent) => {
     e.stopPropagation();
     setShowQRCodeModal(true);
@@ -120,7 +120,7 @@ export default function EventCard({ event, photos, onPhotoDelete, onEventDelete 
               )}
             </div>
 
-            <div className={tw`flex items-center space-x-3`}>
+            <div className={tw`flex items-center flex-wrap gap-2 sm:gap-3`}>
               <span className={tw`bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium`}>
                 {photos.length} {photos.length === 1 ? 'foto' : 'fotos'}
               </span>
@@ -209,11 +209,12 @@ export default function EventCard({ event, photos, onPhotoDelete, onEventDelete 
 
       {/* Modal de confirmação para deletar evento */}
       <ModalDeleteEvent
+        eventId={event.eventId}
         isOpen={showDeleteConfirm}
         eventName={event.eventName || 'Evento sem nome'}
         photoCount={photos.length}
         isDeleting={isDeleting}
-        onCancel={() => setShowDeleteConfirm(false)}
+        onClose={() => setShowDeleteConfirm(false)}   // ✅ corrigido
         onConfirm={handleDeleteEvent}
       />
 

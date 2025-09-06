@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { tw } from 'twind';
 import axios from 'axios';
 import QRCode from 'qrcode';
@@ -11,27 +11,37 @@ interface EventData {
   local: string;
   typeEvent: string;
   dataEvent: string;
+  status: string;
 }
 
-export default function ModalCadastroEvento() { 
-  const [isOpen, setIsOpen] = useState(false);
-  const [form, setForm] = useState({ eventName: '', local: '', typeEvent: '', dataEvent: '' });
-  const [qrUrl, setQrUrl] = useState('');
-  const [eventData, setEventData] = useState<EventData | null>(null);
-  const [savedQrCode, setSavedQrCode] = useState('');
-  const [isLoading, setIsLoading] = useState(false); // Estado de loading
+interface ModalCadastroEventoProps {
+  isOpen?: boolean;
+  onClose?: () => void;
+  onEventCreated?: () => void;
+}
 
-  // Listener para abrir o modal via evento customizado
+export default function ModalCadastroEvento({ isOpen = false, onClose, onEventCreated }: ModalCadastroEventoProps) {
+  const [form, setForm] = useState({ eventName: '', local: '', typeEvent: '', dataEvent: '', status: 'ativo' });
+  const [qrUrl, setQrUrl] = useState('');
+  const [eventId, setEventId] = useState('');
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [isLoading, setIsLoading] = useState(false); // Estado de loading
+  const [internalIsOpen, setInternalIsOpen] = useState(false); // Para modo não controlado
+
+  // Listener para abrir o modal via evento customizado (apenas se não controlado por props)
   useEffect(() => {
-    const handleOpenModal = () => setIsOpen(true);
+    if (onClose) return; // Se tem onClose, é controlado por props
     
-    // Adiciona listener global para o evento customizado
+    const handleOpenModal = () => {
+      setInternalIsOpen(true);
+    };
+    
     window.addEventListener('openCadastroModal', handleOpenModal);
     
     return () => {
       window.removeEventListener('openCadastroModal', handleOpenModal);
     };
-  }, []);
+  }, [onClose]);
 
   const eventTypes = ["Casamento", "Aniversário", "Palestra", "Workshop", "Festa Corporativa", "Formatura", "Chá de Bebê", "Encontro Religioso", "Lançamento de Produto", "Show Musical"];
 
@@ -56,18 +66,21 @@ export default function ModalCadastroEvento() {
 
       toast.success('Evento cadastrado com sucesso!');
       setQrUrl(url);
-      setEventData(form);
+      setEventId(response.data.id);
 
       if (qrCodeGenerated) {
         generateQrCodeForDisplay(url);
       }
 
-      setForm({ eventName: '', local: '', typeEvent: '', dataEvent: '' });
-      setIsOpen(false);
-
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000);
+      setForm({ eventName: '', local: '', typeEvent: '', dataEvent: '', status: 'ativo' });
+      
+      if (onEventCreated) {
+        onEventCreated();
+      } else {
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
+      }
 
     } catch (error) {
       console.error('Erro ao cadastrar evento:', error);
@@ -81,17 +94,24 @@ export default function ModalCadastroEvento() {
   const generateQrCodeForDisplay = async (url: string) => {
     try {
       const qrCodeDataURL = await QRCode.toDataURL(url, { width: 200 });
-      setSavedQrCode(qrCodeDataURL);
+      setQrUrl(qrCodeDataURL);
     } catch (error) {
       console.error('Erro ao gerar QR Code para exibição:', error);
     }
   };
 
   const handleCloseModal = () => {
-    setIsOpen(false);
+    if (onClose) {
+      onClose();
+    } else {
+      setInternalIsOpen(false);
+    }
   };
 
-  if (!isOpen) return null;
+  // Determinar se o modal deve estar aberto
+  const modalIsOpen = onClose ? isOpen : internalIsOpen;
+
+  if (!modalIsOpen) return null;
 
   return (
     <>
@@ -188,6 +208,24 @@ export default function ModalCadastroEvento() {
                         {type}
                       </option>
                     ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label htmlFor="status" className={tw`block text-sm font-medium text-gray-700 mb-1`}>
+                    Status
+                    <span className={tw`text-red-500`}>*</span>
+                  </label>
+                  <select
+                    id="status"
+                    name="status"
+                    value={form.status}
+                    onChange={handleChange}
+                    disabled={isLoading}
+                    className={tw`w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all ${isLoading ? 'bg-gray-100 cursor-not-allowed' : ''}`}
+                  >
+                    <option value="ativo">Ativo</option>
+                    <option value="inativo">Inativo</option>
                   </select>
                 </div>
               </div>

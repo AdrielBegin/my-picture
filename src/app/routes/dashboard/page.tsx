@@ -1,12 +1,12 @@
 'use client';
 
-import Dashboard from "@/app/components/admin/dashboard/dashboard";
+import ModernDashboard from "@/app/components/admin/modern-dashboard/modern-dashboard";
 
 export default function UploadPage() {
 
   return (
     <div className="">             
-        <Dashboard/>
+        <ModernDashboard/>
       </div>
     
   );
