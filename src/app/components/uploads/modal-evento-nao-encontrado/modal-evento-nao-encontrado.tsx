@@ -1,5 +1,6 @@
 
 'use client';
+import { TbAlertCircle } from "react-icons/tb";
 import { tw } from "twind";
 
 export default function ModalEventoNaoEncontrado() {
@@ -7,7 +8,7 @@ export default function ModalEventoNaoEncontrado() {
         <div className={tw`min-h-screen bg-gray-100 flex items-center justify-center py-12 px-4`}>
             <div className={tw`max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden p-6`}>
                 <div className={tw`text-center space-y-4`}>
-                    <div className={tw`text-6xl`}>❌</div>
+                    <div className={tw`text-6xl text-red-600 flex justify-center`}><TbAlertCircle /></div>
                     <h1 className={tw`text-2xl font-bold text-red-600`}>
                         Evento não encontrado
                     </h1>
