@@ -8,6 +8,9 @@ import ModalDeleteEvent from '../modal-delete-event/modal-delete-event';
 import ModalEditarEvento from '../modal-editar-evento/modal-editar-evento';
 import { Timestamp } from "firebase/firestore";
 import { FiLink } from "react-icons/fi";
+import { FaCalendarAlt } from 'react-icons/fa';
+import { FaLocationDot } from "react-icons/fa6";
+import { SiTarget } from "react-icons/si";
 
 interface ModernEventCardProps {
   event: Event;
@@ -103,20 +106,20 @@ export default function ModernEventCard({ event, photos, onEventDelete, onEventU
 
             <div className={tw`space-y-1.5 sm:space-y-2 text-xs sm:text-sm text-gray-600`}>
               <div className={tw`flex items-center gap-2`}>
-                <span className={tw`text-gray-400`}>📅</span>
+                <span className={tw`text-gray-900`}><FaCalendarAlt   /></span>
                 <span>{formatDate(event.dataEvent)}</span>
               </div>
 
               {event.local && (
                 <div className={tw`flex items-center gap-2`}>
-                  <span className={tw`text-gray-400`}>📍</span>
+                  <span className={tw`text-gray-900`}><FaLocationDot /></span>
                   <span className={tw`truncate`}>{event.local}</span>
                 </div>
               )}
 
               {event.typeEvent && (
                 <div className={tw`flex items-center gap-2`}>
-                  <span className={tw`text-gray-400`}>🎯</span>
+                  <span className={tw`text-gray-900`}><SiTarget /></span>
                   <span>{event.typeEvent}</span>
                 </div>
               )}

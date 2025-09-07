@@ -9,7 +9,8 @@ import Sidebar from '../sidebar/sidebar';
 import Header from '../header/header';
 import Image from "next/image";
 import PhotoExpandedModal from '../modal-expanded-photo/modal-expanded-photo';
-
+import { FaImage, FaUser } from 'react-icons/fa';
+import { TbTargetArrow } from "react-icons/tb";
 
 export default function GaleriaFotos() {
   const [events, setEvents] = useState<Event[]>([]);
@@ -177,19 +178,19 @@ export default function GaleriaFotos() {
           {/* Statistics */}
           <div className={tw`grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8 mx-2 sm:mx-0`}>
             <div className={tw`bg-white rounded-xl p-4 sm:p-6 shadow-sm border border-gray-100 text-center`}>
-              <div className={tw`text-3xl sm:text-4xl mb-2 text-purple-600`}>📸</div>
+              <div className={tw`text-3xl sm:text-4xl mb-2 text-purple-600 flex justify-center`}><FaImage /></div>
               <div className={tw`text-2xl sm:text-3xl font-bold text-gray-900 mb-1`}>{filteredPhotos.length}</div>
               <div className={tw`text-xs sm:text-sm text-gray-600`}>Fotos Encontradas</div>
             </div>
 
             <div className={tw`bg-white rounded-xl p-4 sm:p-6 shadow-sm border border-gray-100 text-center`}>
-              <div className={tw`text-3xl sm:text-4xl mb-2 text-blue-600`}>👥</div>
+              <div className={tw`text-3xl sm:text-4xl mb-2 text-blue-600 flex justify-center`}><FaUser /></div>
               <div className={tw`text-2xl sm:text-3xl font-bold text-gray-900 mb-1`}>{getUniqueParticipants()}</div>
               <div className={tw`text-xs sm:text-sm text-gray-600`}>Participantes</div>
             </div>
 
             <div className={tw`bg-white rounded-xl p-4 sm:p-6 shadow-sm border border-gray-100 text-center`}>
-              <div className={tw`text-3xl sm:text-4xl mb-2 text-green-600`}>🎯</div>
+              <div className={tw`text-3xl sm:text-4xl mb-2 text-green-600 flex justify-center`}><TbTargetArrow /></div>
               <div className={tw`text-2xl sm:text-3xl font-bold text-gray-900 mb-1`}>{events.length}</div>
               <div className={tw`text-xs sm:text-sm text-gray-600`}>Eventos Totais</div>
             </div>

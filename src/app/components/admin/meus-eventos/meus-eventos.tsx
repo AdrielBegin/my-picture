@@ -9,6 +9,7 @@ import Sidebar from '../sidebar/sidebar';
 import Header from '../header/header';
 import ModernEventCard from '../modern-event-card/modern-event-card';
 import ModalCadastroEvento from '../modal-cadastrar-evento/modal-cadastrar-evento';
+import { TbTargetArrow } from 'react-icons/tb';
 
 export default function MeusEventos() {
   const [events, setEvents] = useState<Event[]>([]);
@@ -123,7 +124,7 @@ export default function MeusEventos() {
               </div>
             ) : events.length === 0 ? (
               <div className={tw`text-center py-8 sm:py-12 bg-white rounded-xl border border-gray-100 mx-2 sm:mx-0`}>
-                <div className={tw`text-4xl sm:text-6xl mb-3 sm:mb-4`}>🎯</div>
+                <div className={tw`text-4xl sm:text-6xl mb-3 sm:mb-4 flex justify-center text-purple-600`}><TbTargetArrow /></div>
                 <h3 className={tw`text-lg sm:text-xl font-semibold text-gray-900 mb-2`}>Nenhum evento cadastrado</h3>
                 <p className={tw`text-sm sm:text-base text-gray-600 mb-4 sm:mb-6 px-4`}>Comece criando seu primeiro evento</p>
                 <button

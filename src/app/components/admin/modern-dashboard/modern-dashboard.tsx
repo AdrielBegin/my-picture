@@ -9,6 +9,9 @@ import Sidebar from '../sidebar/sidebar';
 import Header from '../header/header';
 import StatsCard from '../stats-card/stats-card';
 import ModalCadastroEvento from '../modal-cadastrar-evento/modal-cadastrar-evento';
+import { SiTarget } from 'react-icons/si';
+import { FaCalendar, FaClock, FaImage, FaUser } from 'react-icons/fa';
+import { TbTargetArrow } from 'react-icons/tb';
 
 export default function ModernDashboard() {
   const [events, setEvents] = useState<Event[]>([]);
@@ -145,7 +148,7 @@ export default function ModernDashboard() {
               title="Total de Eventos"
               value={events.length}
               subtitle="eventos cadastrados"
-              icon="🎯"
+              icon={<SiTarget />}
               color="blue"
             />
 
@@ -153,7 +156,7 @@ export default function ModernDashboard() {
               title="Total de Fotos"
               value={photos.length}
               subtitle="fotos enviadas"
-              icon="📸"
+              icon={<FaImage />}
               color="green"
             />
 
@@ -161,7 +164,7 @@ export default function ModernDashboard() {
               title="Última Foto"
               value={getLastPhotoDate()}
               subtitle="data do último envio"
-              icon="⏰"
+              icon={<FaClock />}
               color="purple"
             />
 
@@ -169,7 +172,7 @@ export default function ModernDashboard() {
               title="Top Usuário"
               value={getTopSender()}
               subtitle="maior contribuidor"
-              icon="👤"
+              icon={<FaUser />}
               color="orange"
             />
           </div>
@@ -177,7 +180,7 @@ export default function ModernDashboard() {
           {/* Events List */}
           <div className={tw`mb-6`}>
             <div className={tw`flex items-center gap-3 mb-4 sm:mb-6`}>
-              <div className={tw`text-purple-600 text-xl`}>📅</div>
+              <div className={tw`text-purple-600 text-xl`}><FaCalendar /></div>
               <h2 className={tw`text-xl sm:text-2xl font-bold text-gray-900`}>Eventos Recentes</h2>
             </div>
 
@@ -187,7 +190,7 @@ export default function ModernDashboard() {
               </div>
             ) : events.length === 0 ? (
               <div className={tw`text-center py-8 sm:py-12 bg-white rounded-xl border border-gray-100`}>
-                <div className={tw`text-4xl sm:text-6xl mb-4`}>🎯</div>
+                <div className={tw`text-4xl sm:text-6xl mb-4 flex justify-center text-purple-600`}><TbTargetArrow /></div>
                 <h3 className={tw`text-lg sm:text-xl font-semibold text-gray-900 mb-2`}>Nenhum evento cadastrado</h3>
                 <p className={tw`text-gray-600 mb-4 sm:mb-6 text-sm sm:text-base`}>Comece criando seu primeiro evento</p>
                 <button

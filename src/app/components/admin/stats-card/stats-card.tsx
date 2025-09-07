@@ -1,11 +1,12 @@
 'use client';
+import { ReactNode } from 'react';
 import { tw } from 'twind';
 
 interface StatsCardProps {
   title: string;
   value: string | number;
   subtitle: string;
-  icon: string;
+  icon: ReactNode;
   trend?: {
     value: string;
     isPositive: boolean;
