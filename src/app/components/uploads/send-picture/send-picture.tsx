@@ -8,6 +8,7 @@ import UploadStatus from '../upload-status/upload-status';
 import ModalEventoNaoEncontrado from '../modal-evento-nao-encontrado/modal-evento-nao-encontrado';
 import ModalAnimacaoVerificarEvento from '../modal-animacao-verificar-evento/modal-animacao-verificar-evento';
 import Image from "next/image";
+import { CameraIcon } from 'lucide-react';
 
 export default function SendPicture() {
 
@@ -178,8 +179,8 @@ export default function SendPicture() {
 
     return (
         <div className={tw`min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 flex items-center py-4 px-4 sm:px-6 lg:px-8`}>
-            <div className={tw`max-w-md w-full mx-auto bg-white rounded-2xl shadow-2xl overflow-hidden border border-gray-100 transform transition-all duration-500 ease-in-out`}>
-                <div className={tw`bg-gradient-to-r from-indigo-600 to-purple-600 p-4 sm:p-6 text-white text-center transform transition-all duration-300`}>
+            <div className={tw`max-w-sm w-full mx-auto bg-white rounded-2xl shadow-2xl overflow-hidden border border-gray-100 transform transition-all duration-500 ease-in-out`}>
+                <div className={tw`bg-gradient-to-r from-indigo-600 to-purple-600 p-3 sm:p-4 text-white text-center transform transition-all duration-300`}>
                     <div className={tw`mb-2`}>
                         <div className={tw`inline-flex items-center justify-center w-16 h-16 bg-white bg-opacity-20 rounded-full mb-3 animate-pulse`}>
                             <svg className={tw`w-8 h-8`} fill="currentColor" viewBox="0 0 24 24">
@@ -189,12 +190,12 @@ export default function SendPicture() {
                     </div>
                     <h2 className={tw`text-base sm:text-lg font-semibold mb-1 opacity-90`}>{eventName}</h2>
                     <h1 className={tw`text-xl sm:text-2xl font-bold flex items-center justify-center gap-2`}>
-                        <span className={tw`text-3xl animate-bounce`}>📸</span>
+                        <span className={tw`text-3xl animate-bounce`}><CameraIcon /></span>
                         Envie sua foto!
                     </h1>
                 </div>
 
-                <div className={tw`p-4 sm:p-6 space-y-4 sm:space-y-6`}>
+                <div className={tw`p-3 sm:p-4 space-y-3 sm:space-y-4`}>
 
                     <div className={tw`relative transform transition-all duration-300`}>
                         <label htmlFor="nome" className={tw`block font-semibold text-gray-700 mb-2 flex items-center gap-2`}>

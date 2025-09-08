@@ -59,7 +59,7 @@ export default function FileUpload({ onUpload }: FileUploadProps) {
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
         className={tw`
-          relative w-full p-8 border-3 border-dashed rounded-2xl cursor-pointer
+          relative w-full p-4 border-3 border-dashed rounded-2xl cursor-pointer
           transition-all duration-300 transform
           ${
             isDragOver
@@ -103,18 +103,18 @@ export default function FileUpload({ onUpload }: FileUploadProps) {
             </p>
           </div>
           
-          <div className={tw`pt-2`}>
-            <span className={tw`inline-flex items-center px-4 py-2 rounded-full text-sm font-medium ${
-              isDragOver 
-                ? 'bg-indigo-100 text-indigo-700 border-2 border-indigo-300'
-                : 'bg-white text-indigo-600 border-2 border-indigo-200 hover:border-indigo-300'
-            } transition-all duration-300`}>
-              <svg className={tw`w-4 h-4 mr-2`} fill="currentColor" viewBox="0 0 24 24">
-                <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" />
-              </svg>
-              Selecionar arquivo
-            </span>
-          </div>
+            {/* <div className={tw`pt-2`}>
+              <span className={tw`inline-flex items-center px-4 py-2 rounded-full text-sm font-medium ${
+                isDragOver 
+                  ? 'bg-indigo-100 text-indigo-700 border-2 border-indigo-300'
+                  : 'bg-white text-indigo-600 border-2 border-indigo-200 hover:border-indigo-300'
+              } transition-all duration-300`}>
+                <svg className={tw`w-4 h-4 mr-2`} fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" />
+                </svg>
+                Selecionar arquivo
+              </span>
+            </div> */}
         </div>
         
         {/* Efeito de brilho animado */}
