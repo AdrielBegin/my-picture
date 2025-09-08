@@ -229,10 +229,11 @@ export default function CameraCapture({ onCapture, onClose }: CameraCaptureProps
       return;
     }
 
-    if (facingMode === 'user') {
-      context.scale(-1, 1);
-      context.translate(-canvas.width, 0);
-    }
+    // Removido espelhamento para manter movimentos naturais
+    // if (facingMode === 'user') {
+    //   context.scale(-1, 1);
+    //   context.translate(-canvas.width, 0);
+    // }
 
     context.drawImage(video, 0, 0);
 
@@ -454,7 +455,7 @@ export default function CameraCapture({ onCapture, onClose }: CameraCaptureProps
                 onTouchEnd={handleVideoTouch}
                 className={tw`absolute inset-0 w-full h-full object-cover cursor-pointer`}
                 style={{
-                  transform: `${facingMode === 'user' ? 'transform scale-x-[-1]' : 'transform scale-x[1]'} scale(${zoom})`,
+                  transform: `${facingMode === 'user' ? 'scaleX(-1)' : 'scaleX(-1)'} scale(${zoom})`,
                   transformOrigin: 'center center',
                 }}
               />
