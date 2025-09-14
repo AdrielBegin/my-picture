@@ -260,7 +260,7 @@ export default function SendPicture() {
                     </div>
 
                     <div className={tw`space-y-3 sm:space-y-4 transform transition-all duration-500`}>
-                        <button
+                        {/* <button
                             onClick={() => setShowCamera(true)}
                             className={tw`w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-3 px-6 rounded-xl font-semibold text-lg shadow-lg hover:shadow-xl transform transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-3`}
                         >
@@ -275,7 +275,7 @@ export default function SendPicture() {
                             <div className={tw`flex-grow border-t border-gray-200`}></div>
                             <span className={tw`flex-shrink mx-4 text-gray-500 text-sm font-medium bg-white px-3 py-1 rounded-full border border-gray-200`}>ou</span>
                             <div className={tw`flex-grow border-t border-gray-200`}></div>
-                        </div>
+                        </div> */}
 
                         <FileUpload onUpload={handleFileSelect} />
 

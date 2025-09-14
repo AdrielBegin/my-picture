@@ -95,26 +95,13 @@ export default function FileUpload({ onUpload }: FileUploadProps) {
             <p className={tw`text-lg font-semibold ${
               isDragOver ? 'text-indigo-700' : 'text-gray-700'
             } transition-colors duration-300`}>
-              {isDragOver ? 'Solte a imagem aqui!' : 'Arraste uma imagem ou clique para selecionar'}
+              {isDragOver ? 'Solte a imagem aqui!' : 'Arraste uma imagem, clique para selecionar ou tirar uma foto'}
             </p>
             
             <p className={tw`text-sm text-gray-500`}>
               Formatos suportados: JPG, PNG, GIF (máx. 10MB)
             </p>
-          </div>
-          
-            {/* <div className={tw`pt-2`}>
-              <span className={tw`inline-flex items-center px-4 py-2 rounded-full text-sm font-medium ${
-                isDragOver 
-                  ? 'bg-indigo-100 text-indigo-700 border-2 border-indigo-300'
-                  : 'bg-white text-indigo-600 border-2 border-indigo-200 hover:border-indigo-300'
-              } transition-all duration-300`}>
-                <svg className={tw`w-4 h-4 mr-2`} fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" />
-                </svg>
-                Selecionar arquivo
-              </span>
-            </div> */}
+          </div>          
         </div>
         
         {/* Efeito de brilho animado */}
