@@ -17,6 +17,22 @@ export async function POST(req: NextRequest) {
       }, { status: 400 });
     }
 
+    // Validação de tamanho do arquivo (50MB = 50 * 1024 * 1024 bytes)
+    const maxFileSize = 50 * 1024 * 1024; // 50MB
+    if (file.size > maxFileSize) {
+      return NextResponse.json({
+        error: `Arquivo muito grande. Tamanho máximo permitido: 50MB. Tamanho do arquivo: ${(file.size / (1024 * 1024)).toFixed(2)}MB`
+      }, { status: 413 });
+    }
+
+    // Validação de tipo de arquivo (apenas imagens)
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+    if (!allowedTypes.includes(file.type)) {
+      return NextResponse.json({
+        error: `Tipo de arquivo não permitido. Tipos aceitos: ${allowedTypes.join(', ')}`
+      }, { status: 415 });
+    }
+
     // Verificar se o bucket existe
     try {
       await bucket.getMetadata();

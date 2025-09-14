@@ -5,16 +5,41 @@ import { FaCamera } from 'react-icons/fa6';
 
 type FileUploadProps = {
   onUpload: (file: File) => void;
+  onError?: (error: string) => void;
 };
 
-export default function FileUpload({ onUpload }: FileUploadProps) {
+export default function FileUpload({ onUpload, onError }: FileUploadProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isDragOver, setIsDragOver] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
 
+  const validateFile = (file: File): string | null => {
+    // Validação de tamanho (50MB)
+    const maxSize = 50 * 1024 * 1024; // 50MB
+    if (file.size > maxSize) {
+      return `Arquivo muito grande. Tamanho máximo: 50MB. Tamanho atual: ${(file.size / (1024 * 1024)).toFixed(2)}MB`;
+    }
+
+    // Validação de tipo
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+    if (!allowedTypes.includes(file.type)) {
+      return `Tipo de arquivo não permitido. Tipos aceitos: JPG, PNG, GIF, WebP`;
+    }
+
+    return null;
+  };
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files?.[0]) {
-      onUpload(e.target.files[0]);
+      const file = e.target.files[0];
+      const error = validateFile(file);
+      
+      if (error) {
+        onError?.(error);
+        return;
+      }
+      
+      onUpload(file);
     }
   };
 
@@ -33,10 +58,18 @@ export default function FileUpload({ onUpload }: FileUploadProps) {
     setIsDragOver(false);
     
     const files = e.dataTransfer.files;
-    if (files?.[0] && files[0].type.startsWith('image/')) {
-      onUpload(files[0]);
+    if (files?.[0]) {
+      const file = files[0];
+      const error = validateFile(file);
+      
+      if (error) {
+        onError?.(error);
+        return;
+      }
+      
+      onUpload(file);
     }
-  }, [onUpload]);
+  }, [onUpload, onError]);
 
   const handleClick = () => {
     fileInputRef.current?.click();
@@ -86,7 +119,7 @@ export default function FileUpload({ onUpload }: FileUploadProps) {
             </p>
             
             <p className={tw`text-sm text-gray-500`}>
-              Formatos suportados: JPG, PNG, GIF (máx. 10MB)
+              Formatos suportados: JPG, PNG, GIF, WebP (máx. 50MB)
             </p>
           </div>          
         </div>
