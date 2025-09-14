@@ -82,7 +82,7 @@ export default function FileUpload({ onUpload }: FileUploadProps) {
             <p className={tw`text-lg font-semibold ${
               isDragOver ? 'text-indigo-700' : 'text-gray-700'
             } transition-colors duration-300`}>
-              {isDragOver ? 'Solte a imagem aqui!' : 'Arraste uma imagem, clique para selecionar ou tirar uma foto'}
+              {isDragOver ? 'Solte a imagem aqui!' : 'Tirar uma foto ou clique para selecionar'}
             </p>
             
             <p className={tw`text-sm text-gray-500`}>
