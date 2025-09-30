@@ -3,7 +3,7 @@
 
 :root {
   --background: #ffffff;
-  --foreground: #d3cece;
+  --foreground: #1f2937; /* Cor escura para boa visibilidade no tema claro */
 }
 
 @theme inline {
@@ -15,8 +15,8 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #ffffff;
-    --foreground: #000000;
+    --background: #1f2937; /* Fundo escuro para modo escuro */
+    --foreground: #f9fafb; /* Texto claro para modo escuro */
   }
 }
 
@@ -24,6 +24,29 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Estilos específicos para inputs, selects e campos de data */
+input, select, textarea {
+  color: #1f2937 !important; /* Força cor escura para texto em inputs */
+  background-color: #ffffff !important; /* Força fundo branco */
+}
+
+input::placeholder {
+  color: #6b7280 !important; /* Cor cinza para placeholders */
+}
+
+/* Estilos para modo escuro */
+@media (prefers-color-scheme: dark) {
+  input, select, textarea {
+    color: #f9fafb !important; /* Texto claro no modo escuro */
+    background-color: #374151 !important; /* Fundo escuro para inputs no modo escuro */
+    border-color: #4b5563 !important; /* Borda mais clara no modo escuro */
+  }
+  
+  input::placeholder {
+    color: #9ca3af !important; /* Placeholder mais claro no modo escuro */
+  }
 }
 
 /* Animações para a página de login */
