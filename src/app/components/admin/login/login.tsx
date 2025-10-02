@@ -25,7 +25,7 @@ export default function LoginPage() {
 
       if (res.ok) {
         toast.success('Login realizado com sucesso!');
-        setTimeout(() => router.push('/routes/dashboard'), 2000);
+        router.push('/routes/dashboard');
       } else {
         const errorData = await res.json();
         toast.error(errorData.message || 'Credenciais inválidas');

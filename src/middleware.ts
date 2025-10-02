@@ -3,22 +3,21 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { verifyToken } from '@/utils/auth/verify-token';
 
-export function middleware(request: NextRequest) {
-  
-  const token = request.cookies.get('token')?.value;  
-  const isAuth = token && verifyToken(token); 
-  
+export async function middleware(request: NextRequest) {
+  const token = request.cookies.get('token')?.value;
+  const isAuth = token ? await verifyToken(token) : false;
+
   // Definir rotas protegidas que requerem autenticação
   const protectedPaths = [
     '/routes/dashboard',
     '/routes/meus-eventos',
     '/routes/galeria-fotos',
   ];
-  
-  const isProtectedPath = protectedPaths.some(path => 
+
+  const isProtectedPath = protectedPaths.some(path =>
     request.nextUrl.pathname.startsWith(path)
   );
-  
+
   if (isProtectedPath && !isAuth) {
     return NextResponse.redirect(new URL('/routes/login', request.url));
   }
