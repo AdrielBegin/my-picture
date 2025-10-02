@@ -180,7 +180,7 @@ export default function ModernDashboard() {
           {/* Events List */}
           <div className={tw`mb-6`}>
             <div className={tw`flex items-center gap-3 mb-4 sm:mb-6`}>
-              <div className={tw`text-purple-600 text-xl`}><FaCalendar /></div>
+              <div className={tw`text-[#9D6433] text-xl`}><FaCalendar /></div>
               <h2 className={tw`text-xl sm:text-2xl font-bold text-gray-900`}>Eventos Recentes</h2>
             </div>
 

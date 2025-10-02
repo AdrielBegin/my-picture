@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "My Pictures - Compartilhe seus momentos especiais",
+  title: "Fouet Caramelo - Compartilhe seus momentos especiais",
   description: "Plataforma para compartilhar e gerenciar fotos de eventos especiais. Capture e organize seus momentos mais importantes.",
   icons: {
     icon: '/favicon.ico',

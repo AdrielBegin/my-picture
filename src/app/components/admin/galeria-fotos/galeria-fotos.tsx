@@ -178,7 +178,7 @@ export default function GaleriaFotos() {
           {/* Statistics */}
           <div className={tw`grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8 mx-2 sm:mx-0`}>
             <div className={tw`bg-white rounded-xl p-4 sm:p-6 shadow-sm border border-gray-100 text-center`}>
-              <div className={tw`text-3xl sm:text-4xl mb-2 text-purple-600 flex justify-center`}><FaImage /></div>
+              <div className={tw`text-3xl sm:text-4xl mb-2 text-[#9D6433] flex justify-center`}><FaImage /></div>
               <div className={tw`text-2xl sm:text-3xl font-bold text-gray-900 mb-1`}>{filteredPhotos.length}</div>
               <div className={tw`text-xs sm:text-sm text-gray-600`}>Fotos Encontradas</div>
             </div>

@@ -120,14 +120,14 @@ export default function Sidebar({ className, collapsed, onToggleCollapse, isMobi
         {/* Logo/Header */}
         <div className={tw`p-6 border-b border-gray-200`}>
           <div className={tw`flex items-center space-x-3`}>
-            <div className={tw`w-10 h-10 bg-gradient-to-br from-purple-500 to-blue-600 rounded-xl flex items-center justify-center`}>
+            <div className={tw`w-10 h-10 bg-gradient-to-br from-[#40B1C4] to-blue-600 rounded-xl flex items-center justify-center`}>
               <span className={tw`text-white text-lg font-bold`}>
                 <FiCamera />
               </span>
             </div>
             {!collapsed && (
               <div>
-                <h1 className={tw`text-xl font-bold text-gray-800`}>My pictures</h1>
+                <h1 className={tw`text-xl font-bold text-gray-800`}>Fouet Caramelo</h1>
                 <p className={tw`text-sm text-gray-500`}>Fotos de Eventos via QR</p>
               </div>
             )}
@@ -153,7 +153,7 @@ export default function Sidebar({ className, collapsed, onToggleCollapse, isMobi
                 className={tw`
                 w-full flex items-center px-3 py-3 text-left rounded-lg transition-all duration-200
                 ${item.active
-                    ? 'bg-purple-50 text-purple-700 border-r-2 border-purple-500'
+                    ? 'bg-[#40B1C4]/10 text-[#40B1C4] border-r-2 border-[#40B1C4]'
                     : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                   }
                 ${isNavigating ? 'opacity-70 pointer-events-none' : ''}
@@ -181,7 +181,7 @@ export default function Sidebar({ className, collapsed, onToggleCollapse, isMobi
         {/* User Section */}
         <div className={tw`border-t border-gray-200 p-4`}>
           <div className={tw`flex items-center space-x-3 mb-4`}>
-            <div className={tw`w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center`}>
+            <div className={tw`w-8 h-8 bg-[#40B1C4] rounded-full flex items-center justify-center`}>
               <span className={tw`text-white text-sm font-bold`}>A</span>
             </div>
             {!collapsed && (
