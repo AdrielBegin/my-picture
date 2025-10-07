@@ -500,8 +500,8 @@ export default function ModalQRCode({ isOpen, eventId, eventName, eventUrl, onCl
                         {qrCodeImage && !loading && (
                             <>
                                 {/* Event Info */}
-                                <div className={tw`text-center mb-6`}>
-                                    <h3 className={tw`text-lg font-semibold text-gray-800 mb-2`}>
+                                <div className={tw`text-center mb-6 min-w-0`}>
+                                    <h3 className={tw`text-lg font-semibold text-gray-800 mb-2 truncate`}>
                                         {eventData?.eventName || eventName}
                                     </h3>
                                     {eventData?.local && (

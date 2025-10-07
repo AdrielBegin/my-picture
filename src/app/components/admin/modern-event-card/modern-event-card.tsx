@@ -96,9 +96,9 @@ export default function ModernEventCard({ event, photos, onEventDelete, onEventU
       <div className={tw`bg-white rounded-xl p-4 sm:p-6 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-200`}>
         {/* Header do Card */}
         <div className={tw`flex flex-col sm:flex-row sm:items-start justify-between mb-4 gap-3 sm:gap-0`}>
-          <div className={tw`flex-1`}>
-            <div className={tw`flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-2`}>
-              <h3 className={tw`text-lg sm:text-xl font-bold text-gray-900`}>{event.eventName}</h3>
+          <div className={tw`flex-1 min-w-0`}>
+            <div className={tw`flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-2 min-w-0`}>
+              <h3 className={tw`text-lg sm:text-xl font-bold text-gray-900 truncate`}>{event.eventName}</h3>
               <span className={tw`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor()} self-start sm:self-auto`}>
                 {getStatusText()}
               </span>

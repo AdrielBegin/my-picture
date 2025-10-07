@@ -7,6 +7,8 @@ interface ChunkedUploadProps {
   onProgress: (progress: number) => void;
   onComplete: (url: string) => void;
   onError: (error: string) => void;
+  eventId?: string;
+  userName?: string;
 }
 
 interface ChunkUploadResponse {
@@ -24,7 +26,7 @@ interface FinalizeResponse {
 
 const CHUNK_SIZE = 5 * 1024 * 1024; // 5MB por chunk
 
-export default function ChunkedUpload({ file, onProgress, onComplete, onError }: ChunkedUploadProps) {
+export default function ChunkedUpload({ file, onProgress, onComplete, onError, eventId, userName }: ChunkedUploadProps) {
   const [isUploading, setIsUploading] = useState(false);
   const [uploadId, setUploadId] = useState<string | null>(null);
 
@@ -36,6 +38,7 @@ export default function ChunkedUpload({ file, onProgress, onComplete, onError }:
     formData.append('uploadId', uploadId);
     formData.append('fileName', file.name);
     formData.append('fileType', file.type);
+    if (eventId) formData.append('eventId', eventId);
 
     const response = await fetch('/api/upload-chunk', {
       method: 'POST',
@@ -60,6 +63,8 @@ export default function ChunkedUpload({ file, onProgress, onComplete, onError }:
         fileName: file.name,
         fileType: file.type,
         totalSize: file.size,
+        eventId,
+        userName,
       }),
     });
 

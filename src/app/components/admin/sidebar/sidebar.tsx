@@ -1,11 +1,11 @@
 'use client';
 import React, { useState, useCallback, useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
-import { FiCamera, FiLogOut } from 'react-icons/fi';
-import { MdDashboardCustomize } from "react-icons/md";
+import { FiLogOut } from 'react-icons/fi';
 import { FaCalendarAlt } from "react-icons/fa";
 import { GrGallery } from "react-icons/gr";
 import Link from 'next/link';
+import Image from 'next/image';
 import { tw } from 'twind';
 
 interface SidebarProps {
@@ -21,13 +21,13 @@ export default function Sidebar({ className, collapsed, onToggleCollapse, isMobi
   const pathname = usePathname();
 
   const menuItems = [
-    {
-      id: 'dashboard',
-      label: 'Dashboard',
-      icon: <MdDashboardCustomize />,
-      path: '/routes/dashboard',
-      active: pathname === '/routes/dashboard'
-    },
+    // {
+    //   id: 'dashboard',
+    //   label: 'Dashboard',
+    //   icon: <MdDashboardCustomize />,
+    //   path: '/routes/dashboard',
+    //   active: pathname === '/routes/dashboard'
+    // },
     {
       id: 'events',
       label: 'Meus Eventos',
@@ -120,15 +120,19 @@ export default function Sidebar({ className, collapsed, onToggleCollapse, isMobi
         {/* Logo/Header */}
         <div className={tw`p-6 border-b border-gray-200`}>
           <div className={tw`flex items-center space-x-3`}>
-            <div className={tw`w-10 h-10 bg-gradient-to-br from-[#40B1C4] to-blue-600 rounded-xl flex items-center justify-center`}>
-              <span className={tw`text-white text-lg font-bold`}>
-                <FiCamera />
-              </span>
+            <div className={tw`w-10 h-10 rounded-xl overflow-hidden flex items-center justify-center bg-white`}>
+              <Image
+                src="/favicon.ico"
+                alt="Logo da Fouet Caramelo"
+                width={40}
+                height={40}
+                className={tw`object-contain`}
+                priority
+              />
             </div>
             {!collapsed && (
               <div>
                 <h1 className={tw`text-xl font-bold text-gray-800`}>Fouet Caramelo</h1>
-                <p className={tw`text-sm text-gray-500`}>Fotos de Eventos via QR</p>
               </div>
             )}
           </div>

@@ -126,6 +126,7 @@ export default function ModalEditarEvento({ isOpen, onClose, onEventUpdated, eve
                 name="eventName"
                 value={form.eventName}
                 onChange={handleChange}
+                maxLength={100}
                 className={tw`w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
                 placeholder="Digite o nome do evento"
                 required

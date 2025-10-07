@@ -4,7 +4,7 @@ import { readFile, readdir, unlink, rmdir } from 'fs/promises';
 import { existsSync } from 'fs';
 import path from 'path';
 import { bucket } from '@/lib/firebase-admin';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, addDoc, serverTimestamp, doc, getDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 
 interface FinalizeRequest {
@@ -26,6 +26,56 @@ export async function POST(req: NextRequest) {
         success: false,
         error: 'Dados de finalização incompletos'
       }, { status: 400 });
+    }
+
+    // Validar eventId obrigatório para finalizar upload
+    if (!eventId) {
+      return NextResponse.json({
+        success: false,
+        error: 'Event ID é obrigatório.'
+      }, { status: 400 });
+    }
+
+    // Validar evento e status
+    try {
+      const eventRef = doc(db, 'events', eventId);
+      const eventSnap = await getDoc(eventRef);
+      if (!eventSnap.exists()) {
+        return NextResponse.json({
+          success: false,
+          error: 'Evento não encontrado.'
+        }, { status: 404 });
+      }
+      const status = (eventSnap.data()?.status || '').toString().trim().toLowerCase();
+      if (status !== 'ativo') {
+        return NextResponse.json({
+          success: false,
+          error: 'O prazo para envio de fotos deste evento já expirou. Obrigado por participar!'
+        }, { status: 403 });
+      }
+    } catch (validationError) {
+      console.error('Erro ao validar evento na finalização:', validationError);
+      return NextResponse.json({
+        success: false,
+        error: 'Erro ao validar evento.'
+      }, { status: 500 });
+    }
+
+    // Validação de tamanho e tipo do arquivo (consistente com upload normal)
+    const maxFileSize = 50 * 1024 * 1024; // 50MB
+    if (totalSize > maxFileSize) {
+      return NextResponse.json({
+        success: false,
+        error: `Arquivo muito grande. Tamanho máximo permitido: 50MB. Tamanho do arquivo: ${(totalSize / (1024 * 1024)).toFixed(2)}MB`
+      }, { status: 413 });
+    }
+
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+    if (!allowedTypes.includes(fileType)) {
+      return NextResponse.json({
+        success: false,
+        error: `Tipo de arquivo não permitido. Tipos aceitos: ${allowedTypes.join(', ')}`
+      }, { status: 415 });
     }
 
     // Verificar se o diretório de chunks existe

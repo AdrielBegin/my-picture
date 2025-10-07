@@ -251,8 +251,8 @@ export default function ModernDashboard() {
                     } p-4 hover:bg-gray-50 transition-colors`}>
                       <div className={tw`flex items-center justify-between`}>
                         <div className={tw`flex-1`}>
-                          <div className={tw`flex items-center gap-3 mb-2`}>
-                            <h3 className={tw`font-semibold text-gray-900 text-sm sm:text-base`}>
+                          <div className={tw`flex items-center gap-3 mb-2 min-w-0`}>
+                            <h3 className={tw`font-semibold text-gray-900 text-sm sm:text-base truncate`}>
                               {event.eventName}
                             </h3>
                             {getStatusBadge(event.status || 'ativo')}

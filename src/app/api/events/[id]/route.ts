@@ -16,10 +16,18 @@ export async function PUT(req: NextRequest, { params }: RouteParams) {
     const { id } = await params;
     const body = await req.json();
     const { eventName, local, typeEvent, dataEvent, status } = body;
+    const eventNameTrimmed = typeof eventName === 'string' ? eventName.trim() : '';
 
-    if (!eventName || !local || !typeEvent || !dataEvent) {
+    if (!eventNameTrimmed || !local || !typeEvent || !dataEvent) {
       return NextResponse.json(
         { message: 'Todos os campos obrigatórios devem ser preenchidos' },
+        { status: 400 }
+      );
+    }
+
+    if (eventNameTrimmed.length > 100) {
+      return NextResponse.json(
+        { message: 'Nome do evento deve ter no máximo 100 caracteres' },
         { status: 400 }
       );
     }
@@ -35,14 +43,22 @@ export async function PUT(req: NextRequest, { params }: RouteParams) {
       );
     }
 
-    // Preparar dados para atualização
+    // Preparar dados para atualização (preservar status existente se não for enviado)
     const updateData: Partial<Event> = {
-      eventName,
+      eventName: eventNameTrimmed,
       local,
       typeEvent,
-      dataEvent: Timestamp.fromDate(new Date(dataEvent + "T12:00:00")),
-      status: status || 'ativo'
     };
+
+    // Atualizar data do evento somente se fornecida
+    if (dataEvent) {
+      updateData.dataEvent = Timestamp.fromDate(new Date(dataEvent + "T12:00:00"));
+    }
+
+    // Atualizar status somente se fornecido explicitamente
+    if (typeof status === 'string' && status.length > 0) {
+      updateData.status = status;
+    }
 
     // Atualizar o evento
     await updateDoc(eventRef, updateData);

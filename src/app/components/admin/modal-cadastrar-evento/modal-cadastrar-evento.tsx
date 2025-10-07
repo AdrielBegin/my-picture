@@ -145,15 +145,16 @@ export default function ModalCadastroEvento({ isOpen = false, onClose, onEventCr
                     Nome do Evento
                     <span className={tw`text-red-500`}>*</span>
                   </label>
-                  <input
-                    type="text"
-                    id="eventName"
-                    name="eventName"
-                    placeholder="Ex: Conferência de Tecnologia"
-                    value={form.eventName}
-                    onChange={handleChange}
-                    className={tw`w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all`}
-                  />
+                <input
+                  type="text"
+                  id="eventName"
+                  name="eventName"
+                  placeholder="Ex: Conferência de Tecnologia"
+                  value={form.eventName}
+                  onChange={handleChange}
+                  maxLength={100}
+                  className={tw`w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all`}
+                />
                 </div>
 
                 <div>

@@ -182,6 +182,8 @@ export default function SmartUpload({ onUploadComplete, onError, eventId, userNa
               onProgress={handleChunkedProgress}
               onComplete={handleChunkedComplete}
               onError={handleChunkedError}
+              eventId={eventId}
+              userName={userName}
             />
           )}
 

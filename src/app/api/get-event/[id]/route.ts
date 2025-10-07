@@ -1,7 +1,10 @@
 // src/app/api/get-event/%5Bid%5D/route.ts
+import { adminDb } from '@/lib/firebase-admin';
 import { db } from '@/lib/firebase';
 import { doc, getDoc } from 'firebase/firestore';
 import { NextResponse } from 'next/server';
+export const runtime = 'nodejs';
+export const revalidate = 0;
 
 export async function GET(
   request: Request,
@@ -18,25 +21,43 @@ export async function GET(
       );
     }
 
-    // Busca o evento no Firestore
-    const eventRef = doc(db, 'events', id);
-    const eventSnap = await getDoc(eventRef);
+    // Busca o evento no Firestore Admin (garante projeto correto no servidor)
+    // Fallback para Firestore cliente em ambientes sem credenciais Admin
+    let eventData: Record<string, unknown> | undefined;
+    try {
+      const adminSnap = await adminDb.collection('events').doc(id).get();
+      if (!adminSnap.exists) {
+        return NextResponse.json(
+          { message: 'Evento não encontrado' }, 
+          { status: 404 }
+        );
+      }
+      eventData = { id: adminSnap.id, ...adminSnap.data() } as Record<string, unknown>;
+    } catch (adminError) {
+      console.warn('Admin Firestore indisponível, usando cliente. Detalhes:', adminError instanceof Error ? adminError.message : adminError);
+      const clientRef = doc(db, 'events', id);
+      const clientSnap = await getDoc(clientRef);
+      if (!clientSnap.exists()) {
+        return NextResponse.json(
+          { message: 'Evento não encontrado' }, 
+          { status: 404 }
+        );
+      }
+      eventData = { id: clientSnap.id, ...clientSnap.data() } as Record<string, unknown>;
+    }
 
-    if (!eventSnap.exists()) {
+    if (!eventData) {
       return NextResponse.json(
         { message: 'Evento não encontrado' }, 
         { status: 404 }
       );
     }
 
-    const eventData = {
-      id: eventSnap.id,
-      ...eventSnap.data()
-    };
+    const event = eventData;
 
     return NextResponse.json({
       success: true,
-      event: eventData
+      event
     }, { status: 200 });
 
   } catch (error) {

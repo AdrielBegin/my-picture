@@ -62,8 +62,8 @@ export default function ModalDeleteEvent({
                 <h3 className={tw`text-lg font-semibold mb-4 text-gray-800`}>
                     Confirmar exclusão
                 </h3>
-                <p className={tw`text-gray-600 mb-6`}>
-                    Tem certeza que deseja deletar o evento <strong>{eventName}</strong>?
+                <p className={tw`text-gray-600 mb-6 break-words`}>
+                    Tem certeza que deseja deletar o evento <strong className={tw`break-all`}>{eventName}</strong>?
                     {photoCount > 0 && (
                         <span className={tw`block mt-2 text-sm text-red-600`}>
                             Este evento possui {photoCount} foto{photoCount !== 1 ? 's' : ''} que também serão deletadas permanentemente.

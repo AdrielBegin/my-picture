@@ -14,7 +14,7 @@ export default function SendPicture() {
 
     
     const [uploadStatus, setUploadStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
-    const [eventStatus, setEventStatus] = useState<'loading' | 'valid' | 'invalid'>('loading');
+    const [eventStatus, setEventStatus] = useState<'loading' | 'valid' | 'invalid' | 'expired'>('loading');
     const searchParams = useSearchParams();
     const eventId = searchParams!.get('eventId');
     const [userName, setUserName] = useState('');
@@ -38,10 +38,20 @@ export default function SendPicture() {
             try {
                 const response = await fetch(`/api/get-event/${eventId}`);
 
-                if (response.ok) {
+                if (!response.ok) {
+                    setEventStatus('invalid');
+                    return;
+                }
+
+                const data = await response.json().catch(() => null);
+
+                // Tenta obter o status do evento independentemente da estrutura do retorno
+                const statusRaw = (data?.event?.status ?? data?.status ?? '').toString().trim().toLowerCase();
+
+                if (statusRaw === 'ativo') {
                     setEventStatus('valid');
                 } else {
-                    setEventStatus('invalid');
+                    setEventStatus('expired');
                 }
             } catch (error) {
                 setEventStatus('invalid');
@@ -174,6 +184,20 @@ export default function SendPicture() {
     if (eventStatus === 'invalid') {
         return (
             <ModalEventoNaoEncontrado />
+        );
+    }
+
+    if (eventStatus === 'expired') {
+        return (
+            <div className={tw`min-h-screen bg-gray-100 flex items-center justify-center py-12 px-4`}>
+                <div className={tw`max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden p-6 text-center`}>
+                    <div className={tw`text-6xl mb-4`}>⏰</div>
+                    <h1 className={tw`text-2xl font-bold text-gray-800 mb-2`}>Prazo expirado</h1>
+                    <p className={tw`text-gray-600`}>
+                        O prazo para envio de fotos deste evento já expirou. Obrigado por participar!
+                    </p>
+                </div>
+            </div>
         );
     }
 

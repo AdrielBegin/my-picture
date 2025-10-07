@@ -3,6 +3,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { writeFile, mkdir } from 'fs/promises';
 import { existsSync } from 'fs';
 import path from 'path';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
 
 interface ChunkData {
   chunk: File;
@@ -23,12 +25,41 @@ export async function POST(req: NextRequest) {
     const uploadId = formData.get('uploadId') as string;
     const fileName = formData.get('fileName') as string;
     const fileType = formData.get('fileType') as string;
+    const eventIdRaw = formData.get('eventId');
+    const eventId = typeof eventIdRaw === 'string' ? eventIdRaw : null;
 
-    if (!chunk || chunkIndex === undefined || !totalChunks || !uploadId || !fileName) {
+    if (!chunk || chunkIndex === undefined || !totalChunks || !uploadId || !fileName || !eventId) {
       return NextResponse.json({
         success: false,
-        error: 'Dados do chunk incompletos'
+        error: 'Dados do chunk incompletos ou eventId ausente'
       }, { status: 400 });
+    }
+
+    // Validar evento e status (ativo/inativo)
+    try {
+      const eventRef = doc(db, 'events', eventId);
+      const eventSnap = await getDoc(eventRef);
+
+      if (!eventSnap.exists()) {
+        return NextResponse.json({
+          success: false,
+          error: 'Evento não encontrado.'
+        }, { status: 404 });
+      }
+
+      const status = (eventSnap.data()?.status || '').toString().trim().toLowerCase();
+      if (status !== 'ativo') {
+        return NextResponse.json({
+          success: false,
+          error: 'O prazo para envio de fotos deste evento já expirou. Obrigado por participar!'
+        }, { status: 403 });
+      }
+    } catch (validationError) {
+      console.error('Erro ao validar evento no upload-chunk:', validationError);
+      return NextResponse.json({
+        success: false,
+        error: 'Erro ao validar evento.'
+      }, { status: 500 });
     }
 
     // Validação de segurança

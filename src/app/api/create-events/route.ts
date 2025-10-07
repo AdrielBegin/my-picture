@@ -9,14 +9,19 @@ export async function POST(req: Request) {
   try {
     const body = await req.json();
     const { eventName, local, typeEvent, status } = body;
+    const eventNameTrimmed = typeof eventName === 'string' ? eventName.trim() : '';
 
-    if (!eventName || !local || !typeEvent) {
+    if (!eventNameTrimmed || !local || !typeEvent) {
       return NextResponse.json({ message: 'Todos os campos são obrigatórios' }, { status: 400 });
+    }
+
+    if (eventNameTrimmed.length > 100) {
+      return NextResponse.json({ message: 'Nome do evento deve ter no máximo 100 caracteres' }, { status: 400 });
     }
 
     // 1. Cria o evento inicial
     const docRef = await addDoc(collection(db, 'events'), {
-      eventName,
+      eventName: eventNameTrimmed,
       local,
       typeEvent,
       status: status || 'ativo', // Define 'ativo' como padrão se não fornecido

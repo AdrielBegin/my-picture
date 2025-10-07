@@ -101,10 +101,10 @@ export default function EventCard({ event, photos, onPhotoDelete, onEventDelete 
         <div className={tw`bg-blue-50 border-b border-blue-100 p-4`}>
           <div className={tw`flex justify-between items-center`}>
             <div
-              className={tw`flex-1 cursor-pointer hover:bg-blue-100 -m-2 p-2 rounded transition-colors`}
+              className={tw`flex-1 min-w-0 cursor-pointer hover:bg-blue-100 -m-2 p-2 rounded transition-colors`}
               onClick={toggleExpanded}
             >
-              <h2 className={tw`text-xl font-semibold text-gray-800`}>
+              <h2 className={tw`text-xl font-semibold text-gray-800 truncate`}>
                 {event.eventName || 'Evento sem nome'}
               </h2>
 
